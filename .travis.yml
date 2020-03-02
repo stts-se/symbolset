@@ -1,0 +1,30 @@
+language: go
+
+go:
+  - 1.13.x
+
+notifications:
+  email:
+    on_success: change
+    on_failure: change
+
+script:
+ - set -e
+ - cat go.mod
+ - go test -v ./... 
+ - go get github.com/securego/gosec/cmd/gosec
+ - gosec ./...
+ - go get honnef.co/go/tools/cmd/staticcheck
+ - staticcheck ./...
+ #- bash install/setup.sh /tmp/appdir
+
+ # - | 
+ #   if [ -v DO_IMPORT ]; then
+ #     bash install/import.sh lexdata /tmp/appdir schemaversion_3.1 || bash install/import.sh lexdata /tmp/appdir master
+ #   fi
+   
+ # - bash install/start_server.sh -a /tmp/appdir &
+ # - export pid=$!
+ # - echo "symbolset server started on pid $pid. wait for $SLEEP seconds before shutting down"
+ # - sleep $SLEEP
+ # - sh .travis/exit_server_and_fail_if_not_running.sh symbolset $pid
