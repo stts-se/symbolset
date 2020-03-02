@@ -39,7 +39,7 @@ Sample file for US English Sampa to Swedish Sampa (defined in test_data/enusampa
      TEST	D i s	d I s
 
 
-For real world examples (used for unit tests), see the test_data folder: https://github.com/stts-se/pronlex/tree/master/symbolset/converter/test_data
+For real world examples (used for unit tests), see the test_data folder: https://github.com/stts-se/symbolset/tree/master/test_data
 
 To test a single .cnv file from the command line, use symbolset/converter/cmd/converter.
 
