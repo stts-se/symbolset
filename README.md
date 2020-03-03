@@ -25,7 +25,7 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
 
 4. Pre-compile server (for faster execution times).
 
-    `symbolset$ cd server`
+    `symbolset$ cd server`   
     `server$ go build .`
 
 
