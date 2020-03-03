@@ -59,12 +59,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		html = html + " | " + subRouter.desc + "</p>\n\n"
 
 	}
-	html = html + "<p/><hr/><a href='/about'>Symbolset version info</a>"
+	html = html + "<p/><hr/><a href='/version'>About Symbolset</a>"
 	fmt.Fprint(w, html)
 }
 
 func isStaticPage(url string) bool {
-	return url == "/" || strings.Contains(url, "externals") || strings.Contains(url, "built") || url == "/websockreg" || url == "/favicon.ico" || url == "/static/" || url == "/ipa_table.txt" || url == "/ping" || url == "/version" || url == "/about"
+	return url == "/" || strings.Contains(url, "externals") || strings.Contains(url, "built") || url == "/websockreg" || url == "/favicon.ico" || url == "/static/" || url == "/ipa_table" || url == "/ping" || url == "/version"
 }
 
 var initialSlashRe = regexp.MustCompile("^/")
@@ -245,7 +245,7 @@ func main() {
 
 	rout.HandleFunc("/", indexHandler)
 	rout.HandleFunc("/ping", pingHandler)
-	rout.HandleFunc("/about", generateAbout).Methods("GET")
+	rout.HandleFunc("/version", generateAbout).Methods("GET")
 
 	symbolset := newSubRouter(rout, "/symbolset", "Handle transcription symbol sets")
 	symbolset.addHandler(symbolsetList)
@@ -265,6 +265,11 @@ func main() {
 	converter.addHandler(converterConvert)
 	converter.addHandler(converterList)
 	converter.addHandler(converterTable)
+
+	// static
+	rout.HandleFunc("/ipa_table", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, filepath.Join(staticFolder, "ipa_table.txt"))
+	})
 
 	var urls = []string{}
 	errW := rout.Walk(func(route *mux.Route, router *mux.Router, ancestors []*mux.Route) error {
@@ -289,19 +294,16 @@ func main() {
 	meta.addHandler(metaURLsHandler(urls))
 	meta.addHandler(metaExamplesHandler)
 
-	// static
-	rout.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, filepath.Join(staticFolder, "favicon.ico"))
-	})
-	rout.HandleFunc("/ipa_table.txt", func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, filepath.Join(staticFolder, "ipa_table.txt"))
-	})
-
 	if _, err := os.Stat(staticFolder); os.IsNotExist(err) {
 		log.Fatalf("Static folder does not exist: %s", staticFolder)
 	}
 
 	rout.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticFolder))))
+
+	// static
+	rout.HandleFunc("/favicon.ico", func(w http.ResponseWriter, r *http.Request) {
+		http.ServeFile(w, r, filepath.Join(staticFolder, "favicon.ico"))
+	})
 
 	srv := &http.Server{
 		Handler:      rout,

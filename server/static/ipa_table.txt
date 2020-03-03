@@ -1,0 +1,169 @@
+U+0250	ɐ	&#592;	Latin Small Letter Turned A	Near-open central vowel	324
+U+0251	ɑ	&#593;	Latin Small Letter Alpha	Open back unrounded vowel	305
+U+0252	ɒ	&#594;	Latin Small Letter Turned Alpha	Open back rounded vowel	313
+U+0253	ɓ	&#595;	Latin Small Letter B with Hook	Voiced bilabial implosive	160
+U+0254	ɔ	&#596;	Latin Small Letter Open O	Open-mid back rounded vowel	306
+U+0255	ɕ	&#597;	Latin Small Letter C with Curl	Voiceless alveolo-palatal fricative	182
+U+0256	ɖ	&#598;	Latin Small Letter D with Tail	Voiced retroflex plosive	106
+U+0257	ɗ	&#599;	Latin Small Letter D with Hook	Voiced alveolar implosive	162
+U+0258	ɘ	&#600;	Latin Small Letter Reversed E	Close-mid central unrounded vowel	397
+U+0259	ə	&#601;	Latin Small Letter Schwa	Mid central vowel	322
+U+025A	ɚ	&#602;	Latin Small Letter Schwa with Hook	Rhotacized Mid central vowel	327
+U+025B	ɛ	&#603;	Latin Small Letter Open E	Open-mid front unrounded vowel	303
+U+025C	ɜ	&#604;	Latin Small Letter Reversed Open E	Open-mid central unrounded vowel	326
+U+025D	ɝ	&#605;	Latin Small Letter Reversed Open E with Hook	Rhotacized Open-mid central unrounded vowel	
+U+025E	ɞ	&#606;	Latin Small Letter Closed Reversed Open E	Open-mid central rounded vowel	395
+U+025F	ɟ	&#607;	Latin Small Letter Dotless J with Stroke	Voiced palatal plosive	108
+U+0260	ɠ	&#608;	Latin Small Letter G with Hook	Voiced velar implosive	166
+U+0261	ɡ	&#609;	Latin Small Letter Script G	Voiced velar plosive	110
+U+0262	ɢ	&#610;	Latin Letter Small Capital G	Voiced uvular plosive	112
+U+0263	ɣ	&#611;	Latin Small Letter Gamma	Voiced velar fricative	141
+U+0264	ɤ	&#612;	Latin Small Letter Rams Horn	Close-mid back unrounded vowel	315
+U+0265	ɥ	&#613;	Latin Small Letter Turned H	Labial-palatal approximant	171
+U+0266	ɦ	&#614;	Latin Small Letter H with Hook	Voiced glottal fricative	147
+U+0267	ɧ	&#615;	Latin Small Letter Heng with Hook	Swedish sj-sound. Similar to: Voiceless postalveolar fricative, Voiceless velar fricative	175
+U+0268	ɨ	&#616;	Latin Small Letter I with Stroke	Close central unrounded vowel	317
+U+0269	ɩ	&#617;	Latin Small Letter Iota	pre-1989 form of "ɪ" (obsolete)	399
+U+026A	ɪ	&#618;	Latin Letter Small Capital I	Near-close near-front unrounded vowel	319
+U+026B	ɫ	&#619;	Latin Small Letter L with Middle Tilde	Velar/pharyngeal Alveolar lateral approximant	209
+U+026C	ɬ	&#620;	Latin Small Letter L with Belt	Voiceless alveolar lateral fricative	148
+U+026D	ɭ	&#621;	Latin Small Letter L with Retroflex Hook	Retroflex lateral approximant	156
+U+026E	ɮ	&#622;	Latin Small Letter Lezh	Voiced alveolar lateral fricative	149
+U+026F	ɯ	&#623;	Latin Small Letter Turned M	Close back unrounded vowel	316
+U+0270	ɰ	&#624;	Latin Small Letter Turned M with Long Leg	Velar approximant	154
+U+0271	ɱ	&#625;	Latin Small Letter M with Hook	Labiodental nasal	115
+U+0272	ɲ	&#626;	Latin Small Letter N with Left Hook	Palatal nasal	118
+U+0273	ɳ	&#627;	Latin Small Letter N with Retroflex Hook	Retroflex nasal	117
+U+0274	ɴ	&#628;	Latin Letter Small Capital N	Uvular nasal	120
+U+0275	ɵ	&#629;	Latin Small Letter Barred O	Close-mid central rounded vowel	323
+U+0276	ɶ	&#630;	Latin Letter Small Capital OE	Open front rounded vowel	312
+U+0277	ɷ	&#631;	Latin Small Letter Closed Omega	pre-1989 form of "ʊ" (obsolete)	398
+U+0278	ɸ	&#632;	Latin Small Letter Phi	Voiceless bilabial fricative	126
+U+0279	ɹ	&#633;	Latin Small Letter Turned R	Alveolar approximant	151
+U+027A	ɺ	&#634;	Latin Small Letter Turned R with Long Leg	Alveolar lateral flap	181
+U+027B	ɻ	&#635;	Latin Small Letter Turned R with Hook	Retroflex approximant	152
+U+027C	ɼ	&#636;	Latin Small Letter R with Long Leg	Alveolar trill	206
+U+027D	ɽ	&#637;	Latin Small Letter R with Tail	Retroflex flap	125
+U+027E	ɾ	&#638;	Latin Small Letter R with Fishhook	Alveolar tap	124
+U+027F	ɿ	&#639;	Latin Small Letter Reversed R with Fishhook	Syllabic voiced alveolar fricative (Sinologist usage)	
+U+0280	ʀ	&#640;	Latin Letter Small Capital R	Uvular trill	123
+U+0281	ʁ	&#641;	Latin Letter Small Capital Inverted R	Voiced uvular fricative	143
+U+0282	ʂ	&#642;	Latin Small Letter S with Hook	Voiceless retroflex fricative	136
+U+0283	ʃ	&#643;	Latin Small Letter Esh	Voiceless postalveolar fricative	134
+U+0284	ʄ	&#644;	Latin Small Letter Dotless J with Stroke and Hook	Voiced palatal implosive	164
+U+0285	ʅ	&#645;	Latin Small Letter Squat Reversed Esh	Syllabic voiced retroflex fricative (Sinologist usage)	
+U+0286	ʆ	&#646;	Latin Small Letter Esh with Curl	Voiceless alveolo-palatal fricative (obsolete)	204
+U+0287	ʇ	&#647;	Latin Small Letter Turned T	Dental click (obsolete)	201
+U+0288	ʈ	&#648;	Latin Small Letter T with Retroflex Hook	Voiceless retroflex plosive	105
+U+0289	ʉ	&#649;	Latin Small Letter U Bar	Close central rounded vowel	318
+U+028A	ʊ	&#650;	Latin Small Letter Upsilon	Near-close near-back rounded vowel	321
+U+028B	ʋ	&#651;	Latin Small Letter V with Hook	Labiodental approximant	150
+U+028C	ʌ	&#652;	Latin Small Letter Turned V	Open-mid back unrounded vowel	314
+U+028D	ʍ	&#653;	Latin Small Letter Turned W	Voiceless labiovelar approximant	169
+U+028E	ʎ	&#654;	Latin Small Letter Turned Y	Palatal lateral approximant	157
+U+028F	ʏ	&#655;	Latin Letter Small Capital Y	Near-close near-front rounded vowel	320
+U+0290	ʐ	&#656;	Latin Small Letter Z with Retroflex Hook	Voiced retroflex fricative	137
+U+0291	ʑ	&#657;	Latin Small Letter Z with Curl	Voiced alveolo-palatal fricative	183
+U+0292	ʒ	&#658;	Latin Small Letter Ezh	Voiced postalveolar fricative	135
+U+0293	ʓ	&#659;	Latin Small Letter Ezh with Curl	Voiced alveolo-palatal fricative (obsolete)	205
+U+0294	ʔ	&#660;	Latin Letter Glottal Stop	Glottal stop	113
+U+0295	ʕ	&#661;	Latin Letter Pharyngeal Voiced Fricative	Voiced pharyngeal fricative	145
+U+0296	ʖ	&#662;	Latin Letter Inverted Glottal Stop	Alveolar lateral click (obsolete)	203
+U+0297	ʗ	&#663;	Latin Letter Stretched C	Postalveolar click (obsolete)	202
+U+0298	ʘ	&#664;	Latin Letter Bilabial Click	Bilabial click	176
+U+0299	ʙ	&#665;	Latin Letter Small Capital B	Bilabial trill	121
+U+029A	ʚ	&#666;	Latin Small Letter Closed Open E	A mistake for [œ]	396
+U+029B	ʛ	&#667;	Latin Letter Small Capital G with Hook	Voiced uvular implosive	168
+U+029C	ʜ	&#668;	Latin Letter Small Capital H	Voiceless epiglottal fricative	172
+U+029D	ʝ	&#669;	Latin Small Letter J with Crossed Tail	Voiced palatal fricative	139
+U+029E	ʞ	&#670;	Latin Small Letter Turned K	Velar click (obsolete)	291
+U+029F	ʟ	&#671;	Latin Letter Small Capital L	Velar lateral approximant	158
+U+02A0	ʠ	&#672;	Latin Small Letter Q with Hook	"Voiceless" uvular implosive (obsolete)	167
+U+02A1	ʡ	&#673;	Latin Letter Glottal Stop with Stroke	Epiglottal plosive	173
+U+02A2	ʢ	&#674;	Latin Letter Reversed Glottal Stop with Stroke	Voiced epiglottal fricative	174
+U+02A3	ʣ	&#675;	Latin Small Letter DZ Digraph	Voiced alveolar affricate (obsolete)	212
+U+02A4	ʤ	&#676;	Latin Small Letter Dezh Digraph	Voiced postalveolar affricate (obsolete)	214
+U+02A5	ʥ	&#677;	Latin Small Letter DZ Digraph with Curl	Voiced alveolo-palatal affricate (obsolete)	216
+U+02A6	ʦ	&#678;	Latin Small Letter TS Digraph	Voiceless alveolar affricate (obsolete)	211
+U+02A7	ʧ	&#679;	Latin Small Letter Tesh Digraph	Voiceless postalveolar affricate (obsolete)	213
+U+02A8	ʨ	&#680;	Latin Small Letter TC Digraph with Curl	Voiceless alveolo-palatal affricate (obsolete)	215
+U+02A9	ʩ	&#681;	Latin Small Letter Feng Digraph	velopharyngeal fricative	602
+U+02AA	ʪ	&#682;	Latin Small Letter LS Digraph	voiceless lateral alveolar fricative	603
+U+02AB	ʫ	&#683;	Latin Small Letter LZ Digraph	voiced lateral alveolar fricative	604
+U+02AC	ʬ	&#684;	Latin Letter Bilabial Percussive	Bilabial percussive	
+U+02AD	ʭ	&#685;	Latin Letter Bidental Percussive	Bidental percussive	601
+U+02AE	ʮ	&#686;	Latin Small Letter Turned H with Fishhook	Syllabic labialized voiced alveolar fricative (Sinologist usage)	
+U+02AF	ʯ	&#687;	Latin Small Letter Turned H with Fishhook and Tail	Syllabic labialized voiced retroflex fricative (Sinologist usage)	
+
+# ADDON 2016-03-07
+U+0061	a	&#97;	Latin Small Letter A	Open front unrounded vowel
+U+0062	b	&#98;	Latin Small Letter B	bilabial plosive
+U+0063	c	&#99;	Latin Small Letter C	palatal plosive
+U+0064	d	&#100;	Latin Small Letter D	alveolar plosive
+U+0065	e	&#101;	Latin Small Letter E	close-mid front unrounded vowel
+U+0066	f	&#102;	Latin Small Letter F	labiodental fricative
+U+0067	g	&#103;	Latin Small Letter G	velar plosive Ascii g
+U+0068	h	&#104;	Latin Small Letter H	glottal fricative
+U+0069	i	&#105;	Latin Small Letter I	close front unrounded vowel
+U+006A	j	&#106;	Latin Small Letter J	palatal approximant
+U+006B	k	&#107;	Latin Small Letter K	velar plosive
+U+006C	l	&#108;	Latin Small Letter L	lateral alveolar approximant
+U+006C U+0329	l̩̩̩	&#108; &#809;	Latin Small Letter L with combining vertical line below	syllabic l
+U+006D	m	&#109;	Latin Small Letter M	bilabial nasal
+U+006D U+0329	m̩̩	&#109;  &#809;	Latin Small Letter M with combining vertical line below	syllabic m
+U+006E	n	&#110;	Latin Small Letter N	alveolar nasal
+U+006E U+0329	n̩̩̩	&#110; &#809;	Latin Small Letter N with combining vertical line below	syllabic n
+U+006F	o	&#111;	Latin Small Letter O	close-mid back rounded vowel
+U+0070	p	&#112;	Latin Small Letter P	bilabial plosive
+U+0071	q	&#113;	Latin Small Letter Q	uvular plosive
+U+0072	r	&#114;	Latin Small Letter R	alveolar trill
+U+0073	s	&#115;	Latin Small Letter S	alveolar fricative
+U+0074	t	&#116;	Latin Small Letter T	alveolar plosive
+U+0075	u	&#117;	Latin Small Letter U	close back rounded vowel
+U+0076	v	&#118;	Latin Small Letter V	labiodental fricative
+U+0077	w	&#119;	Latin Small Letter W	labial-velar approximant
+U+0078	x	&#120;	Latin Small Letter X	velar fricative
+U+0079	y	&#121;	Latin Small Letter Y	close front rounded vowel
+U+007A	z	&#122;	Latin Small Letter Z	alveolar fricative
+U+00E6	æ	&#230;	Latin Small Letter AE	raised-open front unrounded vowel
+U+00E7	ç	&#231;	Latin Small Letter C with cedilla	palatal fricative
+U+00F0	ð	&#240;	Latin Small Letter ETH	dental fricative
+U+00F8	ø	&#248;	Latin Small Letter O with stroke	close-mid front rounded vowel
+U+0127	ħ	&#295;	Latin Small Letter H with stroke	pharyngeal fricative
+U+014B	ŋ	&#331;	Latin Small Letter ENG	velar nasal
+U+0153	œ	&#339;	Latin small ligature OE	Open-mid front rounded vowel
+U+03B2	β	&#946;	Greek Small Letter Beta	bilabial fricative
+U+03B8	θ	&#952;	Greek Small Letter Theta	dental fricative
+U+03C7	χ	&#967;	Greek Small Letter Chi	uvular fricative
+
+# LONG VOWELS
+U+0061 U+02D0	aː	&#97; &#720;	Latin Small Letter A with Modifier Letter Triangular Colon	Open front unrounded vowel (long)
+U+0065 U+02D0	eː	&#101; &#720;	Latin Small Letter E with Modifier Letter Triangular Colon	close-mid front unrounded vowel (long)
+U+0069 U+02D0	iː	&#105; &#720;	Latin Small Letter I with Modifier Letter Triangular Colon	close front unrounded vowel (long)
+U+006F U+02D0	oː	&#111; &#720;	Latin Small Letter O with Modifier Letter Triangular Colon	close-mid back rounded vowel (long)
+U+0075 U+02D0	uː	&#117; &#720;	Latin Small Letter U with Modifier Letter Triangular Colon	close back rounded vowel (long)
+U+0079 U+02D0	yː	&#121; &#720;	Latin Small Letter Y with Modifier Letter Triangular Colon	close front rounded vowel (long)
+U+00E6 U+02D0	æː	&#230; &#720;	Latin Small Letter AE with Modifier Letter Triangular Colon	raised-open front unrounded vowel (long)
+U+00F8 U+02D0	øː	&#248; &#720;	Latin Small Letter O with stroke with Modifier Letter Triangular Colon	close-mid front rounded vowel (long)
+U+0153 U+02D0	œː	&#339; &#720;	Latin small ligature OE with Modifier Letter Triangular Colon	Open-mid front rounded vowel (long)
+U+0250 U+02D0	ɐː	&#592; &#720;	Latin Small Letter Turned A with Modifier Letter Triangular Colon	Near-open central vowel (long)
+U+0251 U+02D0	ɑː	&#593; &#720;	Latin Small Letter Alpha with Modifier Letter Triangular Colon	Open back unrounded vowel (long)
+U+0252 U+02D0	ɒː	&#594; &#720;	Latin Small Letter Turned Alpha with Modifier Letter Triangular Colon	Open back rounded vowel (long)
+U+0254 U+02D0	ɔː	&#596; &#720;	Latin Small Letter Open O with Modifier Letter Triangular Colon	Open-mid back rounded vowel (long)
+U+0258 U+02D0	ɘː	&#600; &#720;	Latin Small Letter Reversed E with Modifier Letter Triangular Colon	Close-mid central unrounded vowel (long)
+U+0259 U+02D0	əː	&#601; &#720;	Latin Small Letter Schwa with Modifier Letter Triangular Colon	Mid central vowel (long)
+U+025A U+02D0	ɚː	&#602; &#720;	Latin Small Letter Schwa with Hook with Modifier Letter Triangular Colon	Rhotacized Mid central vowel (long)
+U+025B U+02D0	ɛː	&#603; &#720;	Latin Small Letter Open E with Modifier Letter Triangular Colon	Open-mid front unrounded vowel (long)
+U+025C U+02D0	ɜː	&#604; &#720;	Latin Small Letter Reversed Open E with Modifier Letter Triangular Colon	Open-mid central unrounded vowel (long)
+U+025D U+02D0	ɝː	&#605; &#720;	Latin Small Letter Reversed Open E with Hook with Modifier Letter Triangular Colon	Rhotacized Open-mid central unrounded vowel (long)
+U+025E U+02D0	ɞː	&#606; &#720;	Latin Small Letter Closed Reversed Open E with Modifier Letter Triangular Colon	Open-mid central rounded vowel (long)
+U+0264 U+02D0	ɤː	&#612; &#720;	Latin Small Letter Rams Horn with Modifier Letter Triangular Colon	Close-mid back unrounded vowel (long)
+U+0268 U+02D0	ɨː	&#616; &#720;	Latin Small Letter I with Stroke with Modifier Letter Triangular Colon	Close central unrounded vowel (long)
+U+026A U+02D0	ɪː	&#618; &#720;	Latin Letter Small Capital I with Modifier Letter Triangular Colon	Near-close near-front unrounded vowel (long)
+U+026F U+02D0	ɯː	&#623; &#720;	Latin Small Letter Turned M with Modifier Letter Triangular Colon	Close back unrounded vowel (long)
+U+0275 U+02D0	ɵː	&#629; &#720;	Latin Small Letter Barred O with Modifier Letter Triangular Colon	Close-mid central rounded vowel (long)
+U+0276 U+02D0	ɶː	&#630; &#720;	Latin Letter Small Capital OE with Modifier Letter Triangular Colon	Open front rounded vowel (long)
+U+0289 U+02D0	ʉː	&#649; &#720;	Latin Small Letter U Bar with Modifier Letter Triangular Colon	Close central rounded vowel (long)
+U+028A U+02D0	ʊː	&#650; &#720;	Latin Small Letter Upsilon with Modifier Letter Triangular Colon	Near-close near-back rounded vowel (long)
+U+028C U+02D0	ʌː	&#652; &#720;	Latin Small Letter Turned V with Modifier Letter Triangular Colon	Open-mid back unrounded vowel (long)
+U+028F U+02D0	ʏː	&#655; &#720;	Latin Letter Small Capital Y with Modifier Letter Triangular Colon	Near-close near-front rounded vowel (long)
