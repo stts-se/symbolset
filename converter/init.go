@@ -108,6 +108,7 @@ func LoadFile(symbolSets map[string]symbolset.SymbolSet, fName string) (Converte
 	if err != nil {
 		return Converter{}, TestResult{}, err
 	}
+	/* #nosec G307 */
 	defer fh.Close()
 	n := 0
 	s := bufio.NewScanner(fh)

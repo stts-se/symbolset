@@ -199,6 +199,7 @@ func LoadSymbolSetWithName(name string, fName string) (SymbolSet, error) {
 	if err != nil {
 		return nilRes, err
 	}
+	/* #nosec G307 */
 	defer fh.Close()
 	s := bufio.NewScanner(fh)
 	n := 0
