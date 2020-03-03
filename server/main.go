@@ -125,12 +125,16 @@ func getBuildInfo(prefix string, lines []string, defaultValue string) []string {
 }
 
 func generateAbout(w http.ResponseWriter, r *http.Request) {
-
-	bytes, err := ioutil.ReadFile(filepath.Clean(buildInfoFile))
-	if err != nil {
-		log.Printf("failed loading file : %v", err)
+	var buildInfoLines []string
+	if _, err := os.Stat(buildInfoFile); os.IsNotExist(err) {
+		log.Printf("no build info file, will generate about info on-the-fly")
+	} else {
+		bytes, err := ioutil.ReadFile(filepath.Clean(buildInfoFile))
+		if err != nil {
+			log.Printf("failed loading buildinfo file : %v", err)
+		}
+		buildInfoLines = strings.Split(strings.TrimSpace(string(bytes)), "\n")
 	}
-	buildInfoLines := strings.Split(strings.TrimSpace(string(bytes)), "\n")
 
 	res := [][]string{}
 	res = append(res, []string{"Application name", "Symbolset"})
