@@ -31,7 +31,7 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
 
 ### II. Quick start: Start the server with demo set of symbol sets
 
-    `server$ ./server -ss_files demo_files`
+`server$ ./server -ss_files demo_files`
 
 
 ## III. Setup with Wikispeech symbolsets
