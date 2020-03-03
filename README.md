@@ -5,7 +5,7 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
 [![GoDoc](https://godoc.org/github.com/stts-se/symbolset?status.svg)](https://godoc.org/github.com/stts-se/symbolset)
 [![Go Report Card](https://goreportcard.com/badge/github.com/stts-se/symbolset)](https://goreportcard.com/report/github.com/stts-se/symbolset) [![Build Status](https://travis-ci.org/stts-se/symbolset.svg?branch=master)](https://travis-ci.org/stts-se/symbolset)
 
-### I. Server installation
+## I. Server installation
 
 1. Set up `go`
 
@@ -29,7 +29,7 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
     `server$ go build .`
 
 
-### II. Quick start: Start the server with demo set of symbol sets
+## II. Quick start: Start the server with demo set of symbol sets
 
 `server$ ./server -ss_files demo_files`
 
