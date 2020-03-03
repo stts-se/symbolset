@@ -326,6 +326,7 @@ var symbolsetUpload = urlHandler{
 			http.Error(w, fmt.Sprintf("doUploadSymbolSetHandler failed opening local output file : %v", err), http.StatusInternalServerError)
 			return
 		}
+		/* #nosec G307 */
 		defer f.Close()
 		_, err = io.Copy(f, file)
 		if err != nil {

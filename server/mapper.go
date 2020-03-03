@@ -256,6 +256,7 @@ func loadMapperTestsFromFile(fName string) ([]mapperTests, error) {
 	if err != nil {
 		return []mapperTests{}, err
 	}
+	/* #nosec G307 */
 	defer fh.Close()
 	s := bufio.NewScanner(fh)
 	n := 0
