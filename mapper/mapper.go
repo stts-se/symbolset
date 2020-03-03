@@ -49,15 +49,15 @@ func (m Mapper) MapSymbolString(input string) (string, error) {
 	return res.String, nil
 }
 
-// // MapTranscriptions maps the input entry's transcriptions (in-place)
-// func (m Mapper) MapTranscriptions(e *lex.Entry) error {
-// 	err := m.SymbolSet1.ConvertTranscriptionsToIPA(e)
-// 	if err != nil {
-// 		return fmt.Errorf("couldn't map transcription : %v", err)
-// 	}
-// 	err = m.SymbolSet2.ConvertTranscriptionsFromIPA(e)
-// 	if err != nil {
-// 		return fmt.Errorf("couldn't map transcription : %v", err)
-// 	}
-// 	return nil
-// }
+// MapTranscriptions maps the input transcriptions
+func (m Mapper) MapTranscriptions(input []string) ([]string, error) {
+	var res []string
+	for _, t := range input {
+		tNew, err := m.MapTranscription(t)
+		if err != nil {
+			return res, fmt.Errorf("couldn't map transcription : %v", err)
+		}
+		res = append(res, tNew)
+	}
+	return res, nil
+}

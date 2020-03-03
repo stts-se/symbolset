@@ -255,39 +255,3 @@ func (ss SymbolSet) ConvertFromIPA(trans string) (string, error) {
 	res, err = postFilter(ss, res, ss.Type)
 	return res, err
 }
-
-// // ConvertTranscriptionsToIPA converts the input entry's transcriptions to IPA (in-place)
-// func (ss SymbolSet) ConvertTranscriptionsToIPA(e *lex.Entry) error {
-// 	var newTs []lex.Transcription
-// 	var errs []string
-// 	for _, t := range e.Transcriptions {
-// 		newT, err := ss.ConvertToIPA(t.Strn)
-// 		if err != nil {
-// 			errs = append(errs, err.Error())
-// 		}
-// 		newTs = append(newTs, lex.Transcription{ID: t.ID, Strn: newT, EntryID: t.EntryID, Language: t.Language, Sources: t.Sources})
-// 	}
-// 	e.Transcriptions = newTs
-// 	if len(errs) > 0 {
-// 		return fmt.Errorf("%v", strings.Join(errs, "; "))
-// 	}
-// 	return nil
-// }
-
-// // ConvertTranscriptionsFromIPA converts the input entry's transcriptions from IPA (in-place)
-// func (ss SymbolSet) ConvertTranscriptionsFromIPA(e *lex.Entry) error {
-// 	var newTs []lex.Transcription
-// 	var errs []string
-// 	for _, t := range e.Transcriptions {
-// 		newT, err := ss.ConvertFromIPA(t.Strn)
-// 		if err != nil {
-// 			errs = append(errs, err.Error())
-// 		}
-// 		newTs = append(newTs, lex.Transcription{ID: t.ID, Strn: newT, EntryID: t.EntryID, Language: t.Language, Sources: t.Sources})
-// 	}
-// 	e.Transcriptions = newTs
-// 	if len(errs) > 0 {
-// 		return fmt.Errorf("%v", strings.Join(errs, "; "))
-// 	}
-// 	return nil
-// }
