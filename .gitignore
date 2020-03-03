@@ -2,3 +2,5 @@
 
 # Dependency directories
 vendor/
+server/server
+ss_files
