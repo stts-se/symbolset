@@ -18,7 +18,7 @@ import (
 
 // TODO should go into config file
 var symbolSetFileArea *string // = filepath.Join(".", "symbol_files")
-var staticFolder string       // = "."
+const staticFolder = "static"
 
 func getParam(paramName string, r *http.Request) string {
 	res := r.FormValue(paramName)
@@ -30,10 +30,10 @@ func getParam(paramName string, r *http.Request) string {
 }
 
 // print serverMsg to server log, and return an http error with clientMsg and the specified error code (http.StatusInternalServerError, etc)
-// func httpError(w http.ResponseWriter, serverMsg string, clientMsg string, errCode int) {
-// 	log.Println(serverMsg)
-// 	http.Error(w, clientMsg, errCode)
-// }
+func httpError(w http.ResponseWriter, serverMsg string, clientMsg string, errCode int) {
+	log.Println(serverMsg)
+	http.Error(w, clientMsg, errCode)
+}
 
 // func readFile(fName string) ([]string, error) {
 // 	bytes, err := ioutil.ReadFile(fName)
@@ -272,7 +272,7 @@ func main() {
 		ReadTimeout:  15 * time.Second,
 	}
 
-	fmt.Printf("Server started on %s\n", srv.Addr)
+	log.Printf("Server started on %s", srv.Addr)
 
 	log.Fatal(srv.ListenAndServe())
 	fmt.Println("No fun")

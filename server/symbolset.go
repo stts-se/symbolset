@@ -272,7 +272,13 @@ var symbolsetUploadPage = urlHandler{
 	help:     "Upload symbol set file (GUI)",
 	examples: []string{"/upload_page"},
 	handler: func(w http.ResponseWriter, r *http.Request) {
-		http.ServeFile(w, r, filepath.Join(staticFolder, "upload_page.html"))
+		uploadPage := filepath.Join(staticFolder, "upload_page.html")
+		if _, err := os.Stat(uploadPage); os.IsNotExist(err) {
+			msg := fmt.Sprintf("No such file: %s", uploadPage)
+			httpError(w, msg, "404 page not found", http.StatusNotFound)
+			return
+		}
+		http.ServeFile(w, r, uploadPage)
 	},
 }
 
