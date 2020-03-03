@@ -186,8 +186,6 @@ func generateAbout(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "</body></html>")
 }
 
-var vInfo []string
-
 func newSubRouter(rout *mux.Router, root string, description string) *subRouter {
 	var res = subRouter{
 		router: rout.PathPrefix(root).Subrouter(),
