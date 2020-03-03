@@ -16,7 +16,7 @@ script:
  - gosec ./...
  - go get honnef.co/go/tools/cmd/staticcheck
  - staticcheck ./...
- - bash install/setup.sh /tmp/appdir
+ # - bash install/setup.sh /tmp/appdir
 
  # - | 
  #   if [ -v DO_IMPORT ]; then
