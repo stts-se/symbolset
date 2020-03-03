@@ -50,7 +50,7 @@ var metaExamplesHandler = urlHandler{
 		}
 		js, err := json.Marshal(res)
 		if err != nil {
-			log.Printf("lexserver: failed to marshal struct : %v", err)
+			log.Printf("symbolset: failed to marshal struct : %v", err)
 			http.Error(w, fmt.Sprintf("failed to marshal struct : %v", err), http.StatusInternalServerError)
 			return
 		}

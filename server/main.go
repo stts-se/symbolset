@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"os"
 	"os/exec"
+	"os/user"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -16,8 +17,10 @@ import (
 	"github.com/gorilla/mux"
 )
 
-// TODO should go into config file
+// GLOBAL FLAGS
 var symbolSetFileArea *string // = filepath.Join(".", "symbol_files")
+var host, port *string
+
 const staticFolder = "static"
 
 func getParam(paramName string, r *http.Request) string {
@@ -47,10 +50,6 @@ func pingHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "symbolset")
 }
 
-func versionHandler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, strings.Join(vInfo, "\n"))
-}
-
 func indexHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	html := `<h1>Symbolset</h1>`
@@ -60,12 +59,12 @@ func indexHandler(w http.ResponseWriter, r *http.Request) {
 		html = html + " | " + subRouter.desc + "</p>\n\n"
 
 	}
-	html = html + "<p/><hr/><a href='/version'>Symbolset version info</a>"
+	html = html + "<p/><hr/><a href='/about'>Symbolset version info</a>"
 	fmt.Fprint(w, html)
 }
 
 func isStaticPage(url string) bool {
-	return url == "/" || strings.Contains(url, "externals") || strings.Contains(url, "built") || url == "/websockreg" || url == "/favicon.ico" || url == "/static/" || url == "/ipa_table.txt" || url == "/ping" || url == "/version"
+	return url == "/" || strings.Contains(url, "externals") || strings.Contains(url, "built") || url == "/websockreg" || url == "/favicon.ico" || url == "/static/" || url == "/ipa_table.txt" || url == "/ping" || url == "/version" || url == "/about"
 }
 
 var initialSlashRe = regexp.MustCompile("^/")
@@ -110,48 +109,77 @@ func isHandeledPage(url string) bool {
 }
 
 // UTC time with format: yyyy-MM-dd HH:mm:ss z | %Y-%m-%d %H:%M:%S %Z
-var startedTimestamp = time.Now().UTC().Format("2006-01-02 15:04:05 MST")
+var startedTimestamp = time.Now()              //.UTC().Format("2006-01-02 15:04:05 MST")
+const timestampFmt = "2006-01-02 15:04:05 CET" // time.UnixDate // "%Y-%m-%d %H:%M:%S" // "2019-11-04 15:34 CET"
 
-func getVersionInfo() []string {
-	res := []string{}
-	var buildInfoFile = "/wikispeech/symbolset/build_info.txt"
-	if _, err := os.Stat(buildInfoFile); os.IsNotExist(err) {
-		var msg = fmt.Sprintf("server: build info not defined : no such file: %s\n", buildInfoFile)
-		log.Print(msg)
-		res = append(res, "Application name: symbolset")
-		res = append(res, "Build timestamp: n/a")
-		res = append(res, "Built by: user")
-		tag, err := exec.Command("git", "describe", "--tags").Output()
-		if err != nil {
-			log.Printf("server: couldn't retrieve git release info: %v", err)
-			res = append(res, "Release: unknown")
-		} else {
-			branch, err := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD").Output()
-			if err != nil {
-				log.Printf("server: couldn't retrieve git release info: %v", err)
-				res = append(res, "Release: unknown")
-			}
-			res = append(res, strings.TrimSpace(fmt.Sprintf("Release: %s on branch %s",
-				strings.TrimSpace(string(tag)),
-				strings.TrimSpace(string(branch)))))
-		}
-	} else {
+const buildInfoFile = "buildinfo.txt"
 
-		fBytes, err := ioutil.ReadFile(buildInfoFile)
-		if err != nil {
-			var msg = fmt.Sprintf("server: error reading file : %v", err)
-			log.Print(msg)
-		}
-		if _, err = os.Stat(buildInfoFile); os.IsNotExist(err) {
-			var msg = fmt.Sprintf("server: error when reading content from timestamp file : %v", err)
-			log.Print(msg)
-		} else {
-			res = strings.Split(strings.TrimSpace(string(fBytes)), "\n")
+func getBuildInfo(prefix string, lines []string, defaultValue string) []string {
+	for _, l := range lines {
+		fs := strings.Split(l, ": ")
+		if fs[0] == prefix {
+			return fs
 		}
 	}
-	res = append(res, "Started: "+startedTimestamp)
-	log.Println("server: parsed version info", res)
-	return res
+	return []string{prefix, defaultValue}
+}
+
+func generateAbout(w http.ResponseWriter, r *http.Request) {
+
+	bytes, err := ioutil.ReadFile(filepath.Clean(buildInfoFile))
+	if err != nil {
+		log.Printf("failed loading file : %v", err)
+	}
+	buildInfoLines := strings.Split(strings.TrimSpace(string(bytes)), "\n")
+
+	res := [][]string{}
+	res = append(res, []string{"Application name", "Symbolset"})
+
+	// build timestamp
+	res = append(res, getBuildInfo("Build timestamp", buildInfoLines, "n/a"))
+	user, err := user.Current()
+	if err != nil {
+		log.Printf("failed reading system user name : %v", err)
+	}
+
+	// built by username
+	res = append(res, getBuildInfo("Built by", buildInfoLines, user.Username))
+
+	// git commit id and branch
+	commitIDLong, err := exec.Command("git", "rev-parse", "HEAD").Output()
+	var commitIDAndBranch = "unknown"
+	if err != nil {
+		log.Printf("couldn't retrieve git commit hash: %v", err)
+	} else {
+		commitID := string([]rune(string(commitIDLong)[0:7]))
+		branch, err := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD").Output()
+		if err != nil {
+			log.Printf("couldn't retrieve git branch: %v", err)
+		} else {
+			commitIDAndBranch = fmt.Sprintf("%s on %s", commitID, strings.TrimSpace(string(branch)))
+		}
+	}
+	res = append(res, getBuildInfo("Git commit", buildInfoLines, commitIDAndBranch))
+
+	// git release tag
+	releaseTag, err := exec.Command("git", "describe", "--tags").Output()
+	if err != nil {
+		log.Printf("couldn't retrieve git release/tag: %v", err)
+		releaseTag = []byte("unknown")
+	}
+	res = append(res, getBuildInfo("Release", buildInfoLines, string(releaseTag)))
+
+	res = append(res, []string{"Started", startedTimestamp.Format(timestampFmt)})
+	res = append(res, []string{"Host", *host})
+	//res = append(res, []string{"Port", port})
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	fmt.Fprintf(w, "<html><head><title>%s</title></head><body>", "Symbolset: About")
+	fmt.Fprintf(w, "<table><tbody>")
+	for _, l := range res {
+		fmt.Fprintf(w, "<tr><td>%s</td><td>%s</td></tr>\n", l[0], l[1])
+	}
+	fmt.Fprintf(w, "</tbody></table>")
+	fmt.Fprintf(w, "</body></html>")
 }
 
 var vInfo []string
@@ -179,9 +207,9 @@ func newSubRouter(rout *mux.Router, root string, description string) *subRouter 
 }
 
 func main() {
-	port := flag.String("port", "8771", "Server `port`")
-	host := flag.String("host", "127.0.0.1", "Server `host`")
-	symbolSetFileArea = flag.String("ss_files", filepath.Join(".", "symbol_sets"), "location for symbol set files")
+	port = flag.String("port", "8771", "Server `port`")
+	host = flag.String("host", "127.0.0.1", "Server `host`")
+	symbolSetFileArea = flag.String("ss_files", "", "`folder` with symbol set files (required)")
 
 	var printUsage = func() {
 		fmt.Fprintf(os.Stderr, "Usage:\n")
@@ -194,8 +222,11 @@ func main() {
 	}
 	flag.Parse()
 
-	vInfo = getVersionInfo()
-
+	if strings.TrimSpace(*symbolSetFileArea) == "" {
+		fmt.Fprintf(os.Stderr, "-ss_files is required\n")
+		printUsage()
+		os.Exit(1)
+	}
 	err := loadSymbolSets(*symbolSetFileArea)
 	if err != nil {
 		log.Fatalf("failed to load symbol sets from dir %s : %v", *symbolSetFileArea, err)
@@ -212,7 +243,7 @@ func main() {
 
 	rout.HandleFunc("/", indexHandler)
 	rout.HandleFunc("/ping", pingHandler)
-	rout.HandleFunc("/version", versionHandler)
+	rout.HandleFunc("/about", generateAbout).Methods("GET")
 
 	symbolset := newSubRouter(rout, "/symbolset", "Handle transcription symbol sets")
 	symbolset.addHandler(symbolsetList)
@@ -263,6 +294,11 @@ func main() {
 	rout.HandleFunc("/ipa_table.txt", func(w http.ResponseWriter, r *http.Request) {
 		http.ServeFile(w, r, filepath.Join(staticFolder, "ipa_table.txt"))
 	})
+
+	if _, err := os.Stat(staticFolder); os.IsNotExist(err) {
+		log.Fatalf("Static folder does not exist: %s", staticFolder)
+	}
+
 	rout.PathPrefix("/static/").Handler(http.StripPrefix("/static/", http.FileServer(http.Dir(staticFolder))))
 
 	srv := &http.Server{

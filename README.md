@@ -5,7 +5,7 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
 [![GoDoc](https://godoc.org/github.com/stts-se/symbolset?status.svg)](https://godoc.org/github.com/stts-se/symbolset)
 [![Go Report Card](https://goreportcard.com/badge/github.com/stts-se/symbolset)](https://goreportcard.com/report/github.com/stts-se/symbolset) [![Build Status](https://travis-ci.org/stts-se/symbolset.svg?branch=master)](https://travis-ci.org/stts-se/symbolset)
 
-### I. Installation
+### I. Server installation
 
 1. Set up `go`
 
@@ -23,28 +23,29 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
    `symbolset$ go test ./...`
 
 
-4. Pre-compile binaries (for faster execution times)
+4. Pre-compile server (for faster execution times).
 
-    `symbolset$ cd server && go build && cd -`
+    `symbolset$ cd server`
+    `server$ go build .`
 
 
 ### II. Quick start: Start the server with demo set of symbol sets
 
-    `symbolset$ server/server -ss_files demo_files`
+    `server$ ./server -ss_files demo_files`
 
 
 ## III. Setup with Wikispeech symbolsets
 
-1. Clone Wikispeech lexdata (this might take a while)
+1. Clone Wikispeech lexdata (this might take a couple of minutes)
 
    `$ git clone git@github.com:stts-se/lexdata.git`
 
 
 2. Setup 
 
-    `symbolset$ bash setup.sh lexdata ss_files`
+    `server$ bash setup.sh lexdata ss_files`
 
 
 3. Start server
 
-    `symbolset$ server/server -ss_files ss_files`
+    `server$ ./server -ss_files ss_files`

@@ -2,5 +2,8 @@
 
 # Dependency directories
 vendor/
+
 server/server
-ss_files
+server/ss_files
+server/lexdata
+server/symbolset.zip
