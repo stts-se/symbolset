@@ -238,11 +238,16 @@ func main() {
 		log.SetOutput(writer)
 		log.SetFlags(0) // no timestamps etc, since syslog already prints that
 	} else {
-		f, err := os.OpenFile(*logger, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		f, err := os.OpenFile(*logger, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0600)
 		if err != nil {
 			log.Fatalf("Couldn't create logger: %v", err)
 		}
-		defer f.Close()
+		defer func() {
+			err = f.Close()
+			if err != nil {
+				log.Fatalf("Couldn't close logger: %v", err)
+			}
+		}()
 		log.SetOutput(f)
 	}
 	log.Println("server: created logger for " + *logger)
