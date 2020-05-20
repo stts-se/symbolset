@@ -2,6 +2,7 @@ package mapper
 
 import (
 	"fmt"
+	"log"
 	"os"
 	"strings"
 
@@ -47,12 +48,12 @@ func LoadMapperFromFile(fromName string, toName string, fName1 string, fName2 st
 
 	m1, err := symbolset.LoadSymbolSetWithName(fromName, fName1)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "couldn't load mapper: %v\n", err)
+		log.Printf("couldn't load mapper: %v\n", err)
 		return Mapper{}, err
 	}
 	s2, err := symbolset.LoadSymbolSetWithName(toName, fName2)
 	if err != nil {
-		fmt.Fprintf(os.Stderr, "couldn't load mapper: %v\n", err)
+		log.Printf("couldn't load mapper: %v\n", err)
 		return Mapper{}, err
 	}
 	return LoadMapper(m1, s2)
