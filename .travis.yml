@@ -8,6 +8,9 @@ notifications:
     on_success: change
     on_failure: change
 
+env:
+ - RELEASE=master SLEEP=60
+
 script:
  - set -e
  - cat go.mod
@@ -16,15 +19,13 @@ script:
  - gosec ./...
  - go get honnef.co/go/tools/cmd/staticcheck
  - staticcheck ./...
- # - bash install/setup.sh /tmp/appdir
+ - git clone git@github.com:stts-se/lexdata.git
+ - bash server/setup.sh lexdata ss_files
+ - cd server
+ - go run *.go -ss_files ss_files &
+  - export pid=$!
+ - echo "symbolset server started on pid $pid. wait for $SLEEP seconds before shutting down"
+ - sleep $SLEEP
+ - sh .travis/exit_server_and_fail_if_not_running.sh pronlex $pid
+ 
 
- # - | 
- #   if [ -v DO_IMPORT ]; then
- #     bash install/import.sh lexdata /tmp/appdir schemaversion_3.1 || bash install/import.sh lexdata /tmp/appdir master
- #   fi
-   
- # - bash install/start_server.sh -a /tmp/appdir &
- # - export pid=$!
- # - echo "symbolset server started on pid $pid. wait for $SLEEP seconds before shutting down"
- # - sleep $SLEEP
- # - sh .travis/exit_server_and_fail_if_not_running.sh symbolset $pid
