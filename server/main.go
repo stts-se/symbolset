@@ -342,7 +342,7 @@ func main() {
 	signal.Notify(stop, os.Interrupt)
 	go func() {
 		if err := srv.ListenAndServe(); err != nil {
-			log.Fatal(fmt.Errorf("server: couldn't start server on port %s : %v", port, err))
+			log.Fatal(fmt.Errorf("server: couldn't start server on port %s : %v", *port, err))
 		}
 	}()
 	log.Printf("server: server up and running using port " + *port)
