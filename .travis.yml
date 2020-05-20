@@ -20,8 +20,8 @@ script:
  - go get honnef.co/go/tools/cmd/staticcheck
  - staticcheck ./...
  - git clone https://github.com/stts-se/lexdata.git
- - bash server/setup.sh lexdata ss_files
  - cd server
+ - bash setup.sh lexdata ss_files
  - go run *.go -ss_files ss_files &
  - export pid=$!
  - echo "symbolset server started on pid $pid. wait for $SLEEP seconds before shutting down"
