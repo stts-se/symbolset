@@ -1,13 +1,16 @@
 package main
 
 import (
+	"context"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"log"
+	"log/syslog"
 	"net/http"
 	"os"
 	"os/exec"
+	"os/signal"
 	"os/user"
 	"path/filepath"
 	"regexp"
@@ -211,6 +214,7 @@ func newSubRouter(rout *mux.Router, root string, description string) *subRouter 
 func main() {
 	port = flag.String("port", "8771", "Server `port`")
 	host = flag.String("host", "127.0.0.1", "Server `host`")
+	logger := flag.String("logger", "stderr", "System `logger` (stderr, syslog or filename)")
 	symbolSetFileArea = flag.String("ss_files", "", "`folder` with symbol set files (required)")
 
 	var printUsage = func() {
@@ -223,6 +227,25 @@ func main() {
 		os.Exit(0)
 	}
 	flag.Parse()
+
+	if *logger == "stderr" {
+		// default logger
+	} else if *logger == "syslog" {
+		writer, err := syslog.New(syslog.LOG_INFO, "symbolset")
+		if err != nil {
+			log.Fatalf("Couldn't create logger: %v", err)
+		}
+		log.SetOutput(writer)
+		log.SetFlags(0) // no timestamps etc, since syslog already prints that
+	} else {
+		f, err := os.OpenFile(*logger, os.O_APPEND|os.O_CREATE|os.O_WRONLY, 0644)
+		if err != nil {
+			log.Fatalf("Couldn't create logger: %v", err)
+		}
+		defer f.Close()
+		log.SetOutput(f)
+	}
+	log.Println("server: created logger for " + *logger)
 
 	if strings.TrimSpace(*symbolSetFileArea) == "" {
 		fmt.Fprintf(os.Stderr, "-ss_files is required\n")
@@ -314,7 +337,30 @@ func main() {
 
 	log.Printf("Server started on %s", srv.Addr)
 
-	log.Fatal(srv.ListenAndServe())
-	fmt.Println("No fun")
+	stop := make(chan os.Signal, 1)
 
+	signal.Notify(stop, os.Interrupt)
+	go func() {
+		if err := srv.ListenAndServe(); err != nil {
+			log.Fatal(fmt.Errorf("server: couldn't start server on port %s : %v", port, err))
+		}
+	}()
+	log.Printf("server: server up and running using port " + *port)
+
+	<-stop
+
+	// This happens after Ctrl-C
+	fmt.Fprintf(os.Stderr, "\n")
+	shutdown(srv)
+	//log.Fatal(srv.ListenAndServe())
+}
+
+func shutdown(s *http.Server) {
+	log.Println("server: shutting down...")
+
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer cancel()
+	defer s.Shutdown(ctx)
+
+	log.Println("server: shutdown completed")
 }
