@@ -3,7 +3,6 @@ package mapper
 import (
 	"fmt"
 	"log"
-	"os"
 	"strings"
 
 	"github.com/stts-se/symbolset"
