@@ -38,7 +38,7 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
 
 1. Clone Wikispeech lexdata (this might take a couple of minutes)
 
-   `$ git clone git@github.com:stts-se/lexdata.git`
+   `$ git clone https://github.com/stts-se/lexdata.git`
 
 
 2. Setup 

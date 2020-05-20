@@ -19,7 +19,7 @@ script:
  - gosec ./...
  - go get honnef.co/go/tools/cmd/staticcheck
  - staticcheck ./...
- - git clone git@github.com:stts-se/lexdata.git
+ - git clone https://github.com/stts-se/lexdata.git
  - bash server/setup.sh lexdata ss_files
  - cd server
  - go run *.go -ss_files ss_files &
