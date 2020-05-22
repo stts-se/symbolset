@@ -29,7 +29,7 @@ script:
  - export pid=$!
  - echo "symbolset server started on pid $pid. wait for $SLEEP seconds before shutting down"
  - sleep $SLEEP
- - cd -
+ - cd ..
  - sh .travis/exit_server_and_fail_if_not_running.sh pronlex $pid
  
 
