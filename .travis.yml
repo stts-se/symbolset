@@ -9,7 +9,7 @@ notifications:
     on_failure: change
 
 env:
- - RELEASE=master SLEEP=60
+ - RELEASE=master SLEEP=10
 
 script:
  - set -e
@@ -21,6 +21,9 @@ script:
  - staticcheck ./...
  - cd server
  - git clone https://github.com/stts-se/lexdata.git
+ - cd lexdata
+ - git checkout $RELEASE || echo "No such release for lexdata. Using master."
+ - cd ..
  - bash setup.sh lexdata ss_files
  - go run *.go -ss_files ss_files &
  - export pid=$!
