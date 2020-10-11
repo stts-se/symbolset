@@ -170,7 +170,7 @@ func LoadFile(symbolSets map[string]symbolset.SymbolSet, fName string) (Converte
 // Suffix defines the suffix string for converter files (.cnv)
 var Suffix = ".cnv"
 
-// LoadFromDir loads a all symbol sets from the specified folder (all files with .sym extension)
+// LoadFromDir loads a converters from the specified folder (all files with .cnv extension)
 func LoadFromDir(symbolSets map[string]symbolset.SymbolSet, dirName string) (map[string]Converter, map[string]TestResult, error) {
 	// list files in dir
 	fileInfos, err := ioutil.ReadDir(dirName)
