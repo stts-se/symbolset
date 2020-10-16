@@ -39,6 +39,7 @@ func trimTrans(trans string) string {
 	re := "  +"
 	repl := regexp.MustCompile(re)
 	trans = repl.ReplaceAllString(trans, " ")
+	trans = strings.TrimSpace(trans)
 	return trans
 }
 
