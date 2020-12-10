@@ -38,12 +38,12 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
 
 1. Clone Wikispeech lexdata (this might take a couple of minutes)
 
-   `$ git clone https://github.com/stts-se/lexdata.git`
+   `$ git clone https://github.com/stts-se/wikispeech-lexdata.git`
 
 
 2. Setup 
 
-    `server$ bash setup.sh lexdata ss_files`
+    `server$ bash setup.sh wikispeech-lexdata ss_files`
 
 
 3. Start server

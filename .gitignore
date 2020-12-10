@@ -5,5 +5,5 @@ vendor/
 
 server/server
 server/ss_files
-server/lexdata
+server/wikispeech-lexdata
 server/symbolset.zip
