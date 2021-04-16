@@ -49,3 +49,8 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
 3. Start server
 
     `server$ ./server -ss_files ss_files`
+
+
+---
+
+_This work was supported by the Swedish Post and Telecom Authority (PTS) through the grant "Wikispeech – en användargenererad talsyntes på Wikipedia" (2016–2017)._
