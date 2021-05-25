@@ -69,7 +69,9 @@ func (s Service) Load(symbolSetFile string) error {
 // Clear is used to clear the cache (all loaded symbol sets and mappers)
 func (s Service) Clear() {
 	// TODO: MapperService need to be used as mutex, see lexserver/mapper.go
+	//lint:ignore SA4005 faulty warning
 	s.SymbolSets = make(map[string]symbolset.SymbolSet)
+	//lint:ignore SA4005 faulty warning
 	s.Mappers = make(map[string]Mapper)
 }
 
