@@ -281,8 +281,8 @@ func main() {
 	symbolset.addHandler(symbolsetContent)
 	symbolset.addHandler(symbolsetReloadOne)
 	symbolset.addHandler(symbolsetReloadAll)
-	symbolset.addHandler(symbolsetUploadPage)
-	symbolset.addHandler(symbolsetUpload)
+	// symbolset.addHandler(symbolsetUploadPage)
+	// symbolset.addHandler(symbolsetUpload)
 
 	mapper := newSubRouter(rout, "/mapper", "Map transcriptions between different symbol sets")
 	mapper.addHandler(mapperList)
