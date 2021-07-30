@@ -37,10 +37,10 @@ func getParam(paramName string, r *http.Request) string {
 
 // print serverMsg to server log, and return an http error with clientMsg and the specified error code (http.StatusInternalServerError, etc)
 
-func httpError(w http.ResponseWriter, serverMsg string, clientMsg string, errCode int) {
-	log.Println(serverMsg)
-	http.Error(w, clientMsg, errCode)
-}
+// func httpError(w http.ResponseWriter, serverMsg string, clientMsg string, errCode int) {
+// 	log.Println(serverMsg)
+// 	http.Error(w, clientMsg, errCode)
+// }
 
 //
 // func readFile(fName string) ([]string, error) {

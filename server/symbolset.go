@@ -58,9 +58,9 @@ type urlHandler struct {
 	examples []string
 }
 
-func loadSymbolSetFile(fName string) (symbolset.SymbolSet, error) {
-	return symbolset.LoadSymbolSet(fName)
-}
+// func loadSymbolSetFile(fName string) (symbolset.SymbolSet, error) {
+// 	return symbolset.LoadSymbolSet(fName)
+// }
 
 var symbolsetContent = urlHandler{
 	name:     "content",
