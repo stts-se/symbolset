@@ -58,7 +58,6 @@ type urlHandler struct {
 	examples []string
 }
 
-//lint:ignore U1000 Travis fail
 func loadSymbolSetFile(fName string) (symbolset.SymbolSet, error) {
 	return symbolset.LoadSymbolSet(fName)
 }

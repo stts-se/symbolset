@@ -36,7 +36,7 @@ func getParam(paramName string, r *http.Request) string {
 }
 
 // print serverMsg to server log, and return an http error with clientMsg and the specified error code (http.StatusInternalServerError, etc)
-//lint:ignore U1000 Travis fail
+
 func httpError(w http.ResponseWriter, serverMsg string, clientMsg string, errCode int) {
 	log.Println(serverMsg)
 	http.Error(w, clientMsg, errCode)
