@@ -58,9 +58,10 @@ type urlHandler struct {
 	examples []string
 }
 
-// func loadSymbolSetFile(fName string) (symbolset.SymbolSet, error) {
-// 	return symbolset.LoadSymbolSet(fName)
-// }
+//lint:ignore U1000 Travis fail
+func loadSymbolSetFile(fName string) (symbolset.SymbolSet, error) {
+	return symbolset.LoadSymbolSet(fName)
+}
 
 var symbolsetContent = urlHandler{
 	name:     "content",
