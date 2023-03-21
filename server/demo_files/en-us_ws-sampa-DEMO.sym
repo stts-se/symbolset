@@ -1,9 +1,9 @@
 DESCRIPTION	SYMBOL	IPA	IPA UNICODE	CATEGORY
 pin /pIn/	p	p	U+0070	NonSyllabic
-bin /bIn/	t	t	U+0074	NonSyllabic
-tin /tIn/	k	k	U+006B	NonSyllabic
-din /dIn/	b	b	U+0062	NonSyllabic
-kin /kIn/	d	d	U+0064	NonSyllabic
+tin /tIn/	t	t	U+0074	NonSyllabic
+kin /kIn/	k	k	U+006B	NonSyllabic
+bin /bIn/	b	b	U+0062	NonSyllabic
+din /dIn/	d	d	U+0064	NonSyllabic
 give /gIv/	g	g	U+0067	NonSyllabic
 chin /tSIn/	tS	t⁀ʃ	U+0074U+2040U+0283	NonSyllabic
 gin /dZIn/	dZ	d⁀ʒ	U+0064U+2040U+0292	NonSyllabic
