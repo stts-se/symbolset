@@ -352,7 +352,7 @@ func main() {
 			log.Fatal(fmt.Errorf("server: couldn't start server on port %s : %v", *port, err))
 		}
 	}()
-	log.Printf("server: server up and running using port " + *port)
+	log.Printf("server: server up and running using port %s", *port)
 
 	<-stop
 

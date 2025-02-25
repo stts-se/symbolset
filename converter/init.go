@@ -23,7 +23,7 @@ var testRe = regexp.MustCompile("^TEST\t([^\t]+)\t([^\t]+)$")
 func parseTest(s string) (test, error) {
 	var matchRes []string = testRe.FindStringSubmatch(s)
 	if matchRes == nil {
-		return test{}, fmt.Errorf("invalid symbol set definition: " + s)
+		return test{}, fmt.Errorf("invalid symbol set definition: %s", s)
 	}
 	return test{from: matchRes[1], to: matchRes[2]}, nil
 }
@@ -55,7 +55,7 @@ var regexpRuleRe = regexp.MustCompile("^RE\t([^\t]+)\t([^\t]+)$")
 func parseRegexpRule(s string) (Rule, error) {
 	var matchRes []string = regexpRuleRe.FindStringSubmatch(s)
 	if matchRes == nil {
-		return RegexpRule{}, fmt.Errorf("invalid regexp rule definition: " + s)
+		return RegexpRule{}, fmt.Errorf("invalid regexp rule definition: %s", s)
 	}
 	from, err := regexp2.Compile(matchRes[1], regexp2.None)
 	if err != nil {
@@ -74,7 +74,7 @@ var symbolRuleRe = regexp.MustCompile("^SYMBOL\t([^\t]+)\t([^\t]+)$")
 func parseSymbolRule(s string) (Rule, error) {
 	var matchRes []string = symbolRuleRe.FindStringSubmatch(s)
 	if matchRes == nil {
-		return SymbolRule{}, fmt.Errorf("invalid symbol rule definition: " + s)
+		return SymbolRule{}, fmt.Errorf("invalid symbol rule definition: %s", s)
 	}
 	from := matchRes[1]
 	to := matchRes[2]
@@ -90,7 +90,7 @@ var symbolSetRe = regexp.MustCompile("^(FROM|TO)\t([^\t]+)$")
 func parseSymbolSet(s string) (string, error) {
 	var matchRes []string = symbolSetRe.FindStringSubmatch(s)
 	if matchRes == nil {
-		return "", fmt.Errorf("invalid symbol set definition: " + s)
+		return "", fmt.Errorf("invalid symbol set definition: %s", s)
 	}
 	return matchRes[2], nil
 }
