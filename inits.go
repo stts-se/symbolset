@@ -119,7 +119,7 @@ func NewSymbolSetWithTests(name string, symbols []Symbol, testLines []string, ch
 		if symbol.IPA.Unicode != uFromString {
 			return nilRes, fmt.Errorf("ipa symbol /%s/ does not match unicode '%s' -- expected '%s'", symbol.IPA.String, symbol.IPA.Unicode, uFromString)
 		}
-		if strings.Contains(symbol.IPA.String, " ") {
+		if len(symbol.IPA.String) > 1 && strings.Contains(symbol.IPA.String, " ") {
 			return nilRes, fmt.Errorf("ipa symbols cannot contain white space -- found /%s/", symbol.IPA.String)
 		}
 	}
