@@ -3,6 +3,7 @@ package symbolset
 import (
 	"fmt"
 	"regexp"
+	"slices"
 	"strings"
 )
 
@@ -121,9 +122,12 @@ func (ss SymbolSet) ValidIPASymbol(symbol string) bool {
 
 // ContainsSymbols checks if a transcription contains a certain phoneme symbol
 func (ss SymbolSet) ContainsSymbols(trans string, symbols []Symbol) (bool, error) {
-	splitted, err := ss.SplitTranscription(trans)
+	splitted, ssErrs, err := ss.SplitTranscription(trans)
 	if err != nil {
 		return false, err
+	}
+	if len(ssErrs) > 0 {
+		return false, SymbolSetErrors2Error(ssErrs)
 	}
 	for _, phn := range splitted {
 		for _, symbol := range symbols {
@@ -156,7 +160,7 @@ func (ss SymbolSet) GetFromIPA(ipa string) (Symbol, error) {
 }
 
 // SplitTranscription splits the input transcription into separate symbols
-func (ss SymbolSet) SplitTranscription(input string) ([]string, error) {
+func (ss SymbolSet) SplitTranscription(input string) ([]string, []SymbolSetError, error) {
 	if !ss.isInit {
 		panic("symbolSet " + ss.Name + " has not been initialized properly!")
 	}
@@ -164,24 +168,27 @@ func (ss SymbolSet) SplitTranscription(input string) ([]string, error) {
 	if delim.FindStringIndex("") != nil {
 		splitted, unknown, err := splitIntoPhonemes(ss.Symbols, input)
 		if err != nil {
-			return []string{}, err
+			return []string{}, nil, err
 		}
 		if len(unknown) > 0 {
-			return []string{}, fmt.Errorf("found unknown phonemes in transcription /%s/: %v", input, unknown)
+			ssErr := UnknownInputSymbol()
+			ssErr.Values = unknown
+			return []string{}, []SymbolSetError{ssErr}, nil
+			//return []string{}, fmt.Errorf("found unknown phonemes in transcription /%s/: %v", input, unknown)
 		}
-		return splitted, nil
+		return splitted, nil, nil
 	}
-	return delim.Split(input, -1), nil
+	return delim.Split(input, -1), nil, nil
 }
 
 // SplitIPATranscription splits the input transcription into separate symbols
-func (ss SymbolSet) SplitIPATranscription(input string) ([]string, error) {
+func (ss SymbolSet) SplitIPATranscription(input string) ([]string, []SymbolSetError, error) {
 	if !ss.isInit {
 		panic("symbolSet " + ss.Name + " has not been initialized properly!")
 	}
 	input, err := preFilter(ss, input, IPA)
 	if err != nil {
-		return []string{}, err
+		return []string{}, nil, err
 	}
 	delim := ss.PhonemeDelimiter.IPA.String
 	if delim == "" {
@@ -193,65 +200,90 @@ func (ss SymbolSet) SplitIPATranscription(input string) ([]string, error) {
 		}
 		splitted, unknown, err := splitIntoPhonemes(symbols, input)
 		if err != nil {
-			return []string{}, err
+			return []string{}, nil, err
 		}
 		if len(unknown) > 0 {
-			return []string{}, fmt.Errorf("found unknown phonemes in transcription /%s/: %v", input, unknown)
+			ssErr := UnknownInputSymbol()
+			ssErr.Values = unknown
+			return []string{}, []SymbolSetError{ssErr}, nil
 		}
-		return splitted, nil
+		return splitted, nil, nil
 	}
-	return strings.Split(input, delim), nil
+	return strings.Split(input, delim), nil, nil
 }
 
 // ConvertToIPA maps one input transcription string into an IPA transcription
-func (ss SymbolSet) ConvertToIPA(trans string) (string, error) {
+func (ss SymbolSet) ConvertToIPA(trans string) (string, []SymbolSetError, error) {
+	var unknownInputSymbols = []string{}
 	res, err := preFilter(ss, trans, ss.Type)
 	if err != nil {
-		return "", err
+		return "", nil, err
 	}
-	splitted, err := ss.SplitTranscription(res)
+	splitted, ssErrs, err := ss.SplitTranscription(res)
 	if err != nil {
-		return "", err
+		return "", ssErrs, nil
 	}
 	var mapped = make([]string, 0)
 	for _, fromS := range splitted {
 		symbol, err := ss.Get(fromS)
 		if err != nil {
-			return "", fmt.Errorf("input symbol /%s/ is undefined : %v", fromS, err)
+			if !slices.Contains(unknownInputSymbols, fromS) {
+				unknownInputSymbols = append(unknownInputSymbols, fromS)
+			}
+			continue
 		}
 		to := symbol.IPA.String
 		if len(to) > 0 {
 			mapped = append(mapped, to)
 		}
 	}
+	if len(unknownInputSymbols) > 0 {
+		ssErr := UnknownInputSymbol()
+		ssErr.Values = unknownInputSymbols
+		ssErrs = append(ssErrs, ssErr)
+		return "", ssErrs, nil
+	}
+
 	res = strings.Join(mapped, ss.PhonemeDelimiter.IPA.String)
 
 	res, err = postFilter(ss, res, IPA)
-	return res, err
+	return res, nil, err
 }
 
 // ConvertFromIPA maps one input IPA transcription into the current symbol set
-func (ss SymbolSet) ConvertFromIPA(trans string) (string, error) {
+func (ss SymbolSet) ConvertFromIPA(trans string) (string, []SymbolSetError, error) {
 	res := trans
-	splitted, err := ss.SplitIPATranscription(res)
+	splitted, ssErrs, err := ss.SplitIPATranscription(res)
 	if err != nil {
-		return "", err
+		return "", ssErrs, err
 	}
+	if len(ssErrs) > 0 {
+		return "", ssErrs, err
+	}
+	var unknownInputSymbols = []string{}
 	var mapped = make([]string, 0)
 	for _, fromS := range splitted {
 		symbol, err := ss.GetFromIPA(fromS)
 		if err != nil {
-			return "", fmt.Errorf("input symbol /%s/ is undefined : %v", fromS, err)
+			unknownInputSymbols = append(unknownInputSymbols, fromS)
+			continue
+			//return "", fmt.Errorf("input symbol /%s/ is undefined : %v", fromS, err)
 		}
 		to := symbol.String
 		if len(to) > 0 {
 			mapped = append(mapped, to)
 		}
 	}
+	if len(unknownInputSymbols) > 0 {
+		ssErr := UnknownInputSymbol()
+		ssErr.Values = unknownInputSymbols
+		ssErrs = append(ssErrs, ssErr)
+		return "", ssErrs, nil
+	}
 	res = strings.Join(mapped, ss.PhonemeDelimiter.String)
 
 	// remove repeated phoneme delimiters, if any
 	res = ss.repeatedPhonemeDelimiters.ReplaceAllString(res, ss.PhonemeDelimiter.String)
 	res, err = postFilter(ss, res, ss.Type)
-	return res, err
+	return res, nil, err
 }

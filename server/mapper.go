@@ -9,13 +9,13 @@ import (
 	"os"
 	"path/filepath"
 	"regexp"
+	"strings"
 	"sync"
 
 	"github.com/stts-se/symbolset"
 	"github.com/stts-se/symbolset/mapper"
 	//"os"
 	"encoding/json"
-	"strings"
 )
 
 var mMut = struct {
@@ -30,10 +30,11 @@ var mMut = struct {
 
 // JSONMapped : JSON container
 type JSONMapped struct {
-	From   string
-	To     string
-	Input  string
-	Result string
+	Type   string `json:"type"`
+	From   string `json:"from"`
+	To     string `json:"to"`
+	Input  string `json:"input"`
+	Result string `json:"result"`
 }
 
 func trimTrans(trans string) string {
@@ -72,15 +73,42 @@ var mapperMap = urlHandler{
 			return
 		}
 		mMut.Lock()
-		result0, err := mMut.service.Map(fromName, toName, trans)
+		result0, ssErrs, err := mMut.service.Map(fromName, toName, trans)
 		mMut.Unlock()
+		mapRequest := symbolset.MapRequest{
+			From:  fromName,
+			To:    toName,
+			Input: trans,
+		}
+		var mapErrors []symbolset.MapError
 		if err != nil {
-			msg := fmt.Sprintf("failed mapping transcription : %v", err)
-			log.Println(msg)
-			http.Error(w, msg, http.StatusInternalServerError)
+			mapError := symbolset.UnknownMapError()
+			mapError.Values = []string{err.Error()}
+			mapError.Request = mapRequest
+			mapErrors = append(mapErrors, mapError)
+		} else if len(ssErrs) > 0 {
+			for _, ssErr := range ssErrs {
+				mapErrors = append(mapErrors, symbolset.MapError{
+					Type:      "error",
+					ErrorType: ssErr.ErrorType,
+					Values:    ssErr.Values,
+					Request:   mapRequest,
+				})
+			}
+		}
+		if len(mapErrors) > 0 {
+			j, err := json.Marshal(mapErrors)
+			if err != nil {
+				msg := fmt.Sprintf("json marshalling error : %v", err)
+				log.Println(msg)
+				http.Error(w, msg, http.StatusInternalServerError)
+				return
+			}
+			log.Println(string(j))
+			fmt.Fprint(w, string(j))
 			return
 		}
-		result := JSONMapped{Input: trans, Result: result0, From: fromName, To: toName}
+		result := JSONMapped{Type: "result", Input: trans, Result: result0, From: fromName, To: toName}
 		j, err := json.Marshal(result)
 		if err != nil {
 			msg := fmt.Sprintf("json marshalling error : %v", err)
@@ -129,12 +157,46 @@ var mapperMaptable = urlHandler{
 			return
 		}
 		mMut.Lock()
-		mapper0, err := mMut.service.GetMapTable(fromName, toName)
+		mapper0, ssErrs, err := mMut.service.GetMapTable(fromName, toName)
 		mMut.Unlock()
 		if err != nil {
 			msg := fmt.Sprintf("failed getting map table : %v", err)
 			log.Println(msg)
 			http.Error(w, msg, http.StatusInternalServerError)
+			return
+		}
+		mapRequest := symbolset.MapRequest{
+			From: fromName,
+			To:   toName,
+		}
+		var mapErrors []symbolset.MapError
+		if err != nil {
+			mapErrors = append(mapErrors, symbolset.MapError{
+				Type:      "error",
+				ErrorType: "unknown",
+				Values:    []string{err.Error()},
+				Request:   mapRequest,
+			})
+		} else if len(ssErrs) > 0 {
+			for _, ssErr := range ssErrs {
+				mapErrors = append(mapErrors, symbolset.MapError{
+					Type:      "error",
+					ErrorType: ssErr.ErrorType,
+					Values:    ssErr.Values,
+					Request:   mapRequest,
+				})
+			}
+		}
+		if len(mapErrors) > 0 {
+			j, err := json.Marshal(mapErrors)
+			if err != nil {
+				msg := fmt.Sprintf("json marshalling error : %v", err)
+				log.Println(msg)
+				http.Error(w, msg, http.StatusInternalServerError)
+				return
+			}
+			log.Println(string(j))
+			fmt.Fprint(w, string(j))
 			return
 		}
 		mapper := JSONMapper{From: mapper0.SymbolSet1.Name, To: mapper0.SymbolSet2.Name}
@@ -309,12 +371,15 @@ func testMappers(mDefFile string) error {
 		for _, mt := range mTests {
 			log.Println("server: initializing mapper", mt)
 			mMut.Lock()
-			mtab, err := mMut.service.GetMapTable(mt.fromName, mt.toName)
+			mtab, ssErrs, err := mMut.service.GetMapTable(mt.fromName, mt.toName)
 			mMut.Unlock()
 			if err != nil {
 				msg := fmt.Sprintf("failed getting map table : %v", err)
 				log.Println(msg)
 				return err
+			}
+			if len(ssErrs) > 0 {
+				return symbolset.SymbolSetErrors2Error(ssErrs)
 			}
 			for _, from := range mtab.SymbolSet1.Symbols {
 				_, err := mtab.MapSymbol(from)
@@ -332,10 +397,13 @@ func testMappers(mDefFile string) error {
 
 			for _, t := range mt.tests {
 				mMut.Lock()
-				mapped, err := mMut.service.Map(mt.fromName, mt.toName, t.from)
+				mapped, ssErrs, err := mMut.service.Map(mt.fromName, mt.toName, t.from)
 				mMut.Unlock()
 				if err != nil {
 					return err
+				}
+				if len(ssErrs) > 0 {
+					return symbolset.SymbolSetErrors2Error(ssErrs)
 				}
 				if mapped != t.to {
 					msg := fmt.Sprintf("from /%s/ expected /%s/, found /%s/", t.from, t.to, mapped)

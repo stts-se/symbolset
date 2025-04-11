@@ -42,12 +42,17 @@ func parseSSTestLine(l string) (ssTest, error) {
 
 func validateTranscription(ss SymbolSet, trans string) ([]string, error) {
 	var messages = make([]string, 0)
-	splitted, err := ss.SplitTranscription(trans)
+	splitted, ssErrs, err := ss.SplitTranscription(trans)
 	if err != nil {
-		if strings.Contains(fmt.Sprint(err), "unknown phonemes") {
-			messages = append(messages, fmt.Sprint(err))
-		} else {
-			return messages, err
+		// if strings.Contains(fmt.Sprint(err), "unknown phonemes") {
+		// 	messages = append(messages, fmt.Sprint(err))
+		// } else {
+		return messages, err
+		// }
+	}
+	if len(ssErrs) > 0 {
+		for _, e := range ssErrs {
+			messages = append(messages, e.String())
 		}
 	}
 	for _, symbol := range splitted {
@@ -61,12 +66,17 @@ func validateTranscription(ss SymbolSet, trans string) ([]string, error) {
 }
 func validateIPATranscription(ss SymbolSet, trans string) ([]string, error) {
 	var messages = make([]string, 0)
-	splitted, err := ss.SplitIPATranscription(trans)
+	splitted, ssErrs, err := ss.SplitIPATranscription(trans)
 	if err != nil {
-		if strings.Contains(fmt.Sprint(err), "unknown phonemes") {
-			messages = append(messages, fmt.Sprint(err))
-		} else {
-			return messages, err
+		// if strings.Contains(fmt.Sprint(err), "unknown phonemes") {
+		// 	messages = append(messages, fmt.Sprint(err))
+		// } else {
+		return messages, err
+		// }
+	}
+	if len(ssErrs) > 0 {
+		for _, e := range ssErrs {
+			messages = append(messages, e.String())
 		}
 	}
 	for _, symbol := range splitted {

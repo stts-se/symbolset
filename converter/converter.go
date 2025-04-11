@@ -47,17 +47,20 @@ type TestResult struct {
 	Errors []string
 }
 
-func (c Converter) getInvalidSymbols(trans string, symbolset symbolset.SymbolSet) ([]string, error) {
-	if trans == symbolset.PhonemeDelimiter.String {
+func (c Converter) getInvalidSymbols(trans string, ss symbolset.SymbolSet) ([]string, error) {
+	if trans == ss.PhonemeDelimiter.String {
 		return []string{}, nil
 	}
 	invalid := []string{}
-	splitted, err := symbolset.SplitTranscription(trans)
+	splitted, ssErrs, err := ss.SplitTranscription(trans)
 	if err != nil {
 		return invalid, err
 	}
+	if len(ssErrs) > 0 {
+		return invalid, symbolset.SymbolSetErrors2Error(ssErrs)
+	}
 	for _, phn := range splitted {
-		if !symbolset.ValidSymbol(phn) {
+		if !ss.ValidSymbol(phn) {
 			invalid = append(invalid, phn)
 		}
 	}
@@ -110,10 +113,13 @@ func (r SymbolRule) Type() string {
 }
 
 // Convert is used to execute the conversion for this rule
-func (r SymbolRule) Convert(trans string, symbolset symbolset.SymbolSet) (string, error) {
-	splitted, err := symbolset.SplitTranscription(trans)
+func (r SymbolRule) Convert(trans string, ss symbolset.SymbolSet) (string, error) {
+	splitted, ssErrs, err := ss.SplitTranscription(trans)
 	if err != nil {
 		return "", err
+	}
+	if len(ssErrs) > 0 {
+		return "", symbolset.SymbolSetErrors2Error(ssErrs)
 	}
 	res := []string{}
 	for _, phn := range splitted {
@@ -124,7 +130,7 @@ func (r SymbolRule) Convert(trans string, symbolset symbolset.SymbolSet) (string
 		}
 
 	}
-	return strings.Join(res, symbolset.PhonemeDelimiter.String), nil
+	return strings.Join(res, ss.PhonemeDelimiter.String), nil
 }
 
 // RegexpRule is used to convert from one symbol set to another using regular expressions

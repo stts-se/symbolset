@@ -14,16 +14,19 @@ type Mapper struct {
 }
 
 // MapTranscription maps one input transcription string into the new symbol set.
-func (m Mapper) MapTranscription(input string) (string, error) {
-	res, err := m.SymbolSet1.ConvertToIPA(input)
+func (m Mapper) MapTranscription(input string) (string, []symbolset.SymbolSetError, error) {
+	res, ssErrs, err := m.SymbolSet1.ConvertToIPA(input)
 	if err != nil {
-		return "", fmt.Errorf("couldn't map transcription (1) : %v", err)
+		return "", ssErrs, fmt.Errorf("couldn't map transcription (1) : %v", err)
 	}
-	res, err = m.SymbolSet2.ConvertFromIPA(res)
+	if len(ssErrs) > 0 {
+		return "", ssErrs, nil
+	}
+	res, ssErrs, err = m.SymbolSet2.ConvertFromIPA(res)
 	if err != nil {
-		return "", fmt.Errorf("couldn't map transcription (2) : %v", err)
+		return "", ssErrs, fmt.Errorf("couldn't map transcription (2) : %v", err)
 	}
-	return res, nil
+	return res, nil, nil
 }
 
 // MapSymbol maps one input transcription symbol into the new symbol set.
@@ -50,14 +53,18 @@ func (m Mapper) MapSymbolString(input string) (string, error) {
 }
 
 // MapTranscriptions maps the input transcriptions
-func (m Mapper) MapTranscriptions(input []string) ([]string, error) {
+func (m Mapper) MapTranscriptions(input []string) ([]string, []symbolset.SymbolSetError, error) {
 	var res []string
 	for _, t := range input {
-		tNew, err := m.MapTranscription(t)
+		tNew, ssErrs, err := m.MapTranscription(t)
 		if err != nil {
-			return res, fmt.Errorf("couldn't map transcription : %v", err)
+			return res, nil, fmt.Errorf("couldn't map transcription : %v", err)
 		}
+		if len(ssErrs) > 0 {
+			return res, ssErrs, nil
+		}
+
 		res = append(res, tNew)
 	}
-	return res, nil
+	return res, nil, nil
 }

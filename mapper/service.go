@@ -75,58 +75,82 @@ func (s Service) Clear() {
 	s.Mappers = make(map[string]Mapper)
 }
 
-func (s Service) getOrCreateMapper(fromName string, toName string) (Mapper, error) {
+func (s Service) getOrCreateMapper(fromName string, toName string) (Mapper, []symbolset.SymbolSetError, error) {
+	var ssErrs []symbolset.SymbolSetError
 	name := fromName + " - " + toName
 	mapper, ok := s.Mappers[name]
 	if ok {
-		return mapper, nil
+		return mapper, nil, nil
 	}
 
-	var nilRes Mapper
 	var from, to symbolset.SymbolSet
 	from, okFrom := s.SymbolSets[fromName]
 	if !okFrom {
-		return nilRes, fmt.Errorf("couldn't find left hand symbol set named '%s'", fromName)
+		ssErrs = append(ssErrs, symbolset.SymbolSetError{
+			ErrorType: "no such symbol set",
+			Values:    []string{fromName},
+		})
+		//return nilRes, fmt.Errorf("couldn't find left hand symbol set named '%s'", fromName)
 	}
 	to, okTo := s.SymbolSets[toName]
 	if !okTo {
-		return nilRes, fmt.Errorf("couldn't find right hand symbol set named '%s'", toName)
+		ssErrs = append(ssErrs, symbolset.SymbolSetError{
+			ErrorType: "no such symbol set",
+			Values:    []string{toName},
+		})
+		// return nilRes, fmt.Errorf("couldn't find right hand symbol set named '%s'", toName)
 	}
-	mapper, err := LoadMapper(from, to)
+	mapper, ssErrs, err := LoadMapper(from, to)
 	if err == nil {
 		s.Mappers[name] = mapper
 	}
-	return mapper, err
+	return mapper, nil, err
 }
 
 // Map is used by the server to map a transcription from one symbol set to another
-func (s Service) Map(fromName string, toName string, trans string) (string, error) {
+func (s Service) Map(fromName string, toName string, trans string) (string, []symbolset.SymbolSetError, error) {
+	var ssErrs []symbolset.SymbolSetError
 	if toName == "ipa" {
 		ss, ok := s.SymbolSets[fromName]
 		if !ok {
-			return "", fmt.Errorf("couldn't create mapper from %s to %s", fromName, toName)
+			ssErrs = append(ssErrs, symbolset.SymbolSetError{
+				ErrorType: "no such symbol set",
+				Values:    []string{fromName},
+			})
+			return "", ssErrs, nil
 		}
 		return ss.ConvertToIPA(trans)
 	} else if fromName == "ipa" {
 		ss, ok := s.SymbolSets[toName]
 		if !ok {
-			return "", fmt.Errorf("couldn't create mapper from %s to %s", fromName, toName)
+			ssErrs = append(ssErrs, symbolset.SymbolSetError{
+				ErrorType: "no such symbol set",
+				Values:    []string{toName},
+			})
+			return "", ssErrs, nil
 		}
 		return ss.ConvertFromIPA(trans)
 	} else {
-		mapper, err := s.getOrCreateMapper(fromName, toName)
+		mapper, ssErrs, err := s.getOrCreateMapper(fromName, toName)
 		if err != nil {
-			return "", fmt.Errorf("couldn't create mapper from %s to %s : %v", fromName, toName, err)
+			return "", nil, fmt.Errorf("couldn't create mapper from %s to %s : %v", fromName, toName, err)
 		}
-		return mapper.MapTranscription(trans)
+		if len(ssErrs) > 0 {
+			return "", ssErrs, nil
+		}
+		res, ssErrs, err := mapper.MapTranscription(trans)
+		if err != nil || len(ssErrs) > 0 {
+			return res, ssErrs, err
+		}
+		return res, nil, nil
 	}
 }
 
 // GetMapTable is used by the server to show/get a mapping table between two symbol sets
-func (s Service) GetMapTable(fromName string, toName string) (Mapper, error) {
-	mapper, err := s.getOrCreateMapper(fromName, toName)
+func (s Service) GetMapTable(fromName string, toName string) (Mapper, []symbolset.SymbolSetError, error) {
+	mapper, ssErrs, err := s.getOrCreateMapper(fromName, toName)
 	if err != nil {
-		return Mapper{}, fmt.Errorf("couldn't create mapper from %s to %s : %v", fromName, toName, err)
+		return Mapper{}, ssErrs, fmt.Errorf("couldn't create mapper from %s to %s : %v", fromName, toName, err)
 	}
-	return mapper, nil
+	return mapper, ssErrs, nil
 }
