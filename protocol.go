@@ -22,7 +22,7 @@ type MapError struct {
 	Request   MapRequest `json:"request"`
 }
 
-func UnkownMapError() MapError {
+func UnknownMapError() MapError {
 	return MapError{
 		ErrorType: "unknown",
 		ErrorCode: 99,

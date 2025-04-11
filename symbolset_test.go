@@ -822,7 +822,7 @@ func Test_NewSymbolSet_FailIPAContainsWhitespace(t *testing.T) {
 		{"a", NonSyllabic, "", IPASymbol{"A", "U+0041"}},
 		{"A", Syllabic, "", IPASymbol{"A", "U+0041"}},
 		{"p", NonSyllabic, "", IPASymbol{"P", "U+0050"}},
-		{" ", PhonemeDelimiter, "", IPASymbol{" ", "U+0020"}},
+		{" ", PhonemeDelimiter, "", IPASymbol{"P ", "U+0050U+0020"}},
 	}
 	_, err := NewSymbolSet("test", symbols)
 	if err == nil {
