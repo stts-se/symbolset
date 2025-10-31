@@ -221,6 +221,9 @@ func (ss SymbolSet) ConvertToIPA(trans string) (string, []SymbolSetError, error)
 	}
 	splitted, ssErrs, err := ss.SplitTranscription(res)
 	if err != nil {
+		return "", ssErrs, err
+	}
+	if ssErrs != nil {
 		return "", ssErrs, nil
 	}
 	var mapped = make([]string, 0)

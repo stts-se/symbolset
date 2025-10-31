@@ -20,7 +20,7 @@ cp $SCRIPTDIR/demo_files/* $DESTDIR
 echo " done" >&2
 
 echo -n "Copying symbol sets ..." >&2
-cp $LEXDATA/*/*/*.sym $DESTDIR
+cp --backup=numbered $LEXDATA/*/*/*.sym $DESTDIR
 echo " done" >&2
 
 echo -n "Copying converters ..." >&2
