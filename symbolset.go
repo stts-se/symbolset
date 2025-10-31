@@ -178,7 +178,16 @@ func (ss SymbolSet) SplitTranscription(input string) ([]string, []SymbolSetError
 		}
 		return splitted, nil, nil
 	}
-	return delim.Split(input, -1), nil, nil
+	tmpRes := delim.Split(input, -1)
+	res := []string{}
+	// remove leading/trailing empty space
+	for i, sym := range tmpRes {
+		if (i == 0 || i == len(tmpRes)-1) && sym == "" {
+			continue
+		}
+		res = append(res, sym)
+	}
+	return res, nil, nil
 }
 
 // SplitIPATranscription splits the input transcription into separate symbols

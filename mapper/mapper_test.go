@@ -1,6 +1,7 @@
 package mapper
 
 import (
+	"os"
 	"testing"
 
 	"github.com/stts-se/symbolset"
@@ -572,7 +573,7 @@ func Test_MapperFromFile_CMU2WS_WithSyllDelim(t *testing.T) {
 		return
 	}
 	if len(ssErr) > 0 {
-		t.Errorf("Test_LoadMapperFromFile() didn't expect error here : %v", ssErr)
+		os.Exit(1)
 	}
 
 	//testMapTranscription(t, mapper, " ", " ")
