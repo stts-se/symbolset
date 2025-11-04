@@ -42,7 +42,7 @@ func filterBeforeMappingFromIPA(ss SymbolSet, trans string) (string, error) {
 	s := ipaAccentI + "(" + ss.ipaPhonemeRe.String() + "+)" + ipaAccentII
 	repl, err := regexp.Compile(s)
 	if err != nil {
-		return "", fmt.Errorf("couldn't compile regexp from string '%s' : %v", s, err)
+		return "", fmt.Errorf("couldn't compile regexp from string '%s' : %w", s, err)
 	}
 	res := repl.ReplaceAllString(trans, ipaAccentI+ipaAccentII+"$1")
 	return res, nil
@@ -94,7 +94,7 @@ func filterAfterMappingToIPA(ss SymbolSet, trans string) (string, error) {
 	s := "(" + ss.ipaNonSyllabicRe.String() + "*)(" + ss.ipaSyllabicRe.String() + ")(" + ipaIndepStressRe + ")"
 	repl, err := regexp.Compile(s)
 	if err != nil {
-		return "", fmt.Errorf("couldn't compile regexp from string '%s' : %v", s, err)
+		return "", fmt.Errorf("couldn't compile regexp from string '%s' : %w", s, err)
 	}
 	trans = repl.ReplaceAllString(trans, "$3$1$2")
 
@@ -102,7 +102,7 @@ func filterAfterMappingToIPA(ss SymbolSet, trans string) (string, error) {
 	s = "(" + ss.ipaNonSyllabicRe.String() + "*)(" + ipaIndepStressRe + ")(" + ss.ipaSyllabicRe.String() + ")"
 	repl, err = regexp.Compile(s)
 	if err != nil {
-		return "", fmt.Errorf("couldn't compile regexp from string '%s' : %v", s, err)
+		return "", fmt.Errorf("couldn't compile regexp from string '%s' : %w", s, err)
 	}
 	trans = repl.ReplaceAllString(trans, "$2$1$3")
 
@@ -113,7 +113,7 @@ func filterAfterMappingToIPA(ss SymbolSet, trans string) (string, error) {
 		s := ipaAccentI + ipaAccentII + "(" + ss.ipaNonSyllabicRe.String() + "*)(" + ss.ipaSyllabicRe.String() + ")"
 		repl, err := regexp.Compile(s)
 		if err != nil {
-			return "", fmt.Errorf("couldn't compile regexp from string '%s' : %v", s, err)
+			return "", fmt.Errorf("couldn't compile regexp from string '%s' : %w", s, err)
 		}
 		res := repl.ReplaceAllString(trans, ipaAccentI+"$1$2"+ipaAccentII)
 		trans = res
@@ -136,7 +136,7 @@ func filterAfterMappingToCMU(ss SymbolSet, trans string) (string, error) {
 	s := "([012]) ((?:" + ss.NonSyllabicRe.String() + " )*)(" + ss.SyllabicRe.String() + ")"
 	repl, err := regexp.Compile(s)
 	if err != nil {
-		return "", fmt.Errorf("couldn't compile regexp from string '%s' : %v", s, err)
+		return "", fmt.Errorf("couldn't compile regexp from string '%s' : %w", s, err)
 	}
 	trans = repl.ReplaceAllString(trans, "$2$3$1")
 

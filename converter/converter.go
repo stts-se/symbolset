@@ -52,12 +52,9 @@ func (c Converter) getInvalidSymbols(trans string, ss symbolset.SymbolSet) ([]st
 		return []string{}, nil
 	}
 	invalid := []string{}
-	splitted, ssErrs, err := ss.SplitTranscription(trans)
+	splitted, err := ss.SplitTranscription(trans)
 	if err != nil {
 		return invalid, err
-	}
-	if len(ssErrs) > 0 {
-		return invalid, symbolset.SymbolSetErrors2Error(ssErrs)
 	}
 	for _, phn := range splitted {
 		if !ss.ValidSymbol(phn) {
@@ -114,12 +111,9 @@ func (r SymbolRule) Type() string {
 
 // Convert is used to execute the conversion for this rule
 func (r SymbolRule) Convert(trans string, ss symbolset.SymbolSet) (string, error) {
-	splitted, ssErrs, err := ss.SplitTranscription(trans)
+	splitted, err := ss.SplitTranscription(trans)
 	if err != nil {
 		return "", err
-	}
-	if len(ssErrs) > 0 {
-		return "", symbolset.SymbolSetErrors2Error(ssErrs)
 	}
 	res := []string{}
 	for _, phn := range splitted {

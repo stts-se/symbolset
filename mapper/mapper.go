@@ -14,19 +14,16 @@ type Mapper struct {
 }
 
 // MapTranscription maps one input transcription string into the new symbol set.
-func (m Mapper) MapTranscription(input string) (string, []symbolset.SymbolSetError, error) {
-	res, ssErrs, err := m.SymbolSet1.ConvertToIPA(input)
+func (m Mapper) MapTranscription(input string) (string, error) {
+	res, err := m.SymbolSet1.ConvertToIPA(input)
 	if err != nil {
-		return "", ssErrs, fmt.Errorf("couldn't map transcription (1) : %v", err)
+		return "", fmt.Errorf("couldn't map transcription (1) : %w", err)
 	}
-	if len(ssErrs) > 0 {
-		return "", ssErrs, nil
-	}
-	res, ssErrs, err = m.SymbolSet2.ConvertFromIPA(res)
+	res, err = m.SymbolSet2.ConvertFromIPA(res)
 	if err != nil {
-		return "", ssErrs, fmt.Errorf("couldn't map transcription (2) : %v", err)
+		return "", fmt.Errorf("couldn't map transcription (2) : %w", err)
 	}
-	return res, nil, nil
+	return res, nil
 }
 
 // MapSymbol maps one input transcription symbol into the new symbol set.
@@ -34,7 +31,7 @@ func (m Mapper) MapSymbol(input symbolset.Symbol) (symbolset.Symbol, error) {
 	ipa := input.IPA.String
 	res, err := m.SymbolSet2.GetFromIPA(ipa)
 	if err != nil {
-		return symbolset.Symbol{}, fmt.Errorf("couldn't map symbol : %v", err)
+		return symbolset.Symbol{}, fmt.Errorf("couldn't map symbol : %w", err)
 	}
 	return res, nil
 }
@@ -43,28 +40,24 @@ func (m Mapper) MapSymbol(input symbolset.Symbol) (symbolset.Symbol, error) {
 func (m Mapper) MapSymbolString(input string) (string, error) {
 	res, err := m.SymbolSet1.Get(input)
 	if err != nil {
-		return "", fmt.Errorf("couldn't map transcription : %v", err)
+		return "", fmt.Errorf("couldn't map transcription : %w", err)
 	}
 	res, err = m.SymbolSet2.GetFromIPA(res.IPA.String)
 	if err != nil {
-		return "", fmt.Errorf("couldn't map transcription : %v", err)
+		return "", fmt.Errorf("couldn't map transcription : %w", err)
 	}
 	return res.String, nil
 }
 
 // MapTranscriptions maps the input transcriptions
-func (m Mapper) MapTranscriptions(input []string) ([]string, []symbolset.SymbolSetError, error) {
+func (m Mapper) MapTranscriptions(input []string) ([]string, error) {
 	var res []string
 	for _, t := range input {
-		tNew, ssErrs, err := m.MapTranscription(t)
+		tNew, err := m.MapTranscription(t)
 		if err != nil {
-			return res, nil, fmt.Errorf("couldn't map transcription : %v", err)
+			return res, fmt.Errorf("couldn't map transcription : %w", err)
 		}
-		if len(ssErrs) > 0 {
-			return res, ssErrs, nil
-		}
-
 		res = append(res, tNew)
 	}
-	return res, nil, nil
+	return res, nil
 }

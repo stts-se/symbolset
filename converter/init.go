@@ -175,7 +175,7 @@ func LoadFromDir(symbolSets map[string]symbolset.SymbolSet, dirName string) (map
 	// list files in dir
 	fileInfos, err := ioutil.ReadDir(dirName)
 	if err != nil {
-		return nil, nil, fmt.Errorf("failed reading symbol set dir : %v", err)
+		return nil, nil, fmt.Errorf("failed reading symbol set dir : %w", err)
 	}
 	var fErrs error
 	var convs = make(map[string]Converter)
@@ -185,9 +185,9 @@ func LoadFromDir(symbolSets map[string]symbolset.SymbolSet, dirName string) (map
 		if strings.HasSuffix(fi.Name(), Suffix) {
 			conv, testRes, err := LoadFile(symbolSets, filepath.Join(dirName, fi.Name()))
 			if err != nil {
-				thisErr := fmt.Errorf("could't load converter from file %s : %v", fi.Name(), err)
+				thisErr := fmt.Errorf("could't load converter from file %s : %w", fi.Name(), err)
 				if fErrs != nil {
-					fErrs = fmt.Errorf("%v : %v", fErrs, thisErr)
+					fErrs = fmt.Errorf("%v : %w", fErrs, thisErr)
 				} else {
 					fErrs = thisErr
 				}

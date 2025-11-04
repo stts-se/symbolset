@@ -71,7 +71,7 @@ func buildIPARegexpWithGroup(symbols []Symbol, removeEmpty bool, anonGroup bool)
 	regexp.MustCompile(s)
 	re, err := regexp.Compile(s)
 	if err != nil {
-		err = fmt.Errorf("couldn't compile regexp from string '%s' : %v", s, err)
+		err = fmt.Errorf("couldn't compile regexp from string '%s' : %w", s, err)
 		return nil, err
 	}
 	return re, nil
@@ -99,7 +99,7 @@ func buildRegexpWithGroup(symbols []Symbol, removeEmpty bool, anonGroup bool) (*
 	regexp.MustCompile(s)
 	re, err := regexp.Compile(s)
 	if err != nil {
-		err = fmt.Errorf("couldn't compile regexp from string '%s' : %v", s, err)
+		err = fmt.Errorf("couldn't compile regexp from string '%s' : %w", s, err)
 		return nil, err
 	}
 	return re, nil

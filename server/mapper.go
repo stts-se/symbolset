@@ -73,27 +73,33 @@ var mapperMap = urlHandler{
 			return
 		}
 		mMut.Lock()
-		result0, ssErrs, err := mMut.service.Map(fromName, toName, trans)
+		result0, err := mMut.service.Map(fromName, toName, trans)
 		mMut.Unlock()
 		mapRequest := symbolset.MapRequest{
 			From:  fromName,
 			To:    toName,
 			Input: trans,
 		}
+
 		var mapErrors []symbolset.MapError
+		var sse *symbolset.SymbolSetError
 		if err != nil {
-			mapError := symbolset.UnknownMapError()
-			mapError.Values = []string{err.Error()}
-			mapError.Request = mapRequest
-			mapErrors = append(mapErrors, mapError)
-		} else if len(ssErrs) > 0 {
-			for _, ssErr := range ssErrs {
+			if errors.As(err, &sse) {
 				mapErrors = append(mapErrors, symbolset.MapError{
 					Type:      "error",
-					ErrorType: ssErr.ErrorType,
-					Values:    ssErr.Values,
+					ErrorType: sse.ErrorType,
+					ErrorCode: sse.ErrorCode,
+					Values:    sse.Values,
 					Request:   mapRequest,
 				})
+			} else {
+				msg := fmt.Sprintf("server error : %v", err)
+				log.Println(msg)
+				http.Error(w, msg, http.StatusInternalServerError)
+				// mapError := symbolset.UnknownMapError()
+				// mapError.Values = []string{err.Error()}
+				// mapError.Request = mapRequest
+				// mapErrors = append(mapErrors, mapError)
 			}
 		}
 		if len(mapErrors) > 0 {
@@ -156,35 +162,29 @@ var mapperMaptable = urlHandler{
 			http.Error(w, msg, http.StatusInternalServerError)
 			return
 		}
-		mMut.Lock()
-		mapper0, ssErrs, err := mMut.service.GetMapTable(fromName, toName)
-		mMut.Unlock()
-		if err != nil {
-			msg := fmt.Sprintf("failed getting map table : %v", err)
-			log.Println(msg)
-			http.Error(w, msg, http.StatusInternalServerError)
-			return
-		}
 		mapRequest := symbolset.MapRequest{
 			From: fromName,
 			To:   toName,
 		}
+		mMut.Lock()
+		mapper0, err := mMut.service.GetMapTable(fromName, toName)
+		mMut.Unlock()
 		var mapErrors []symbolset.MapError
+		var sse *symbolset.SymbolSetError
 		if err != nil {
-			mapErrors = append(mapErrors, symbolset.MapError{
-				Type:      "error",
-				ErrorType: "unknown",
-				Values:    []string{err.Error()},
-				Request:   mapRequest,
-			})
-		} else if len(ssErrs) > 0 {
-			for _, ssErr := range ssErrs {
+			if errors.As(err, &sse) {
 				mapErrors = append(mapErrors, symbolset.MapError{
 					Type:      "error",
-					ErrorType: ssErr.ErrorType,
-					Values:    ssErr.Values,
+					ErrorType: sse.ErrorType,
+					ErrorCode: sse.ErrorCode,
+					Values:    sse.Values,
 					Request:   mapRequest,
 				})
+			} else {
+				msg := fmt.Sprintf("failed getting map table : %v", err)
+				log.Println(msg)
+				http.Error(w, msg, http.StatusInternalServerError)
+				return
 			}
 		}
 		if len(mapErrors) > 0 {
@@ -371,15 +371,12 @@ func testMappers(mDefFile string) error {
 		for _, mt := range mTests {
 			log.Println("server: initializing mapper", mt)
 			mMut.Lock()
-			mtab, ssErrs, err := mMut.service.GetMapTable(mt.fromName, mt.toName)
+			mtab, err := mMut.service.GetMapTable(mt.fromName, mt.toName)
 			mMut.Unlock()
 			if err != nil {
 				msg := fmt.Sprintf("failed getting map table : %v", err)
 				log.Println(msg)
 				return err
-			}
-			if len(ssErrs) > 0 {
-				return symbolset.SymbolSetErrors2Error(ssErrs)
 			}
 			for _, from := range mtab.SymbolSet1.Symbols {
 				_, err := mtab.MapSymbol(from)
@@ -397,13 +394,10 @@ func testMappers(mDefFile string) error {
 
 			for _, t := range mt.tests {
 				mMut.Lock()
-				mapped, ssErrs, err := mMut.service.Map(mt.fromName, mt.toName, t.from)
+				mapped, err := mMut.service.Map(mt.fromName, mt.toName, t.from)
 				mMut.Unlock()
 				if err != nil {
 					return err
-				}
-				if len(ssErrs) > 0 {
-					return symbolset.SymbolSetErrors2Error(ssErrs)
 				}
 				if mapped != t.to {
 					msg := fmt.Sprintf("from /%s/ expected /%s/, found /%s/", t.from, t.to, mapped)

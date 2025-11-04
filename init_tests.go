@@ -42,18 +42,9 @@ func parseSSTestLine(l string) (ssTest, error) {
 
 func validateTranscription(ss SymbolSet, trans string) ([]string, error) {
 	var messages = make([]string, 0)
-	splitted, ssErrs, err := ss.SplitTranscription(trans)
+	splitted, err := ss.SplitTranscription(trans)
 	if err != nil {
-		// if strings.Contains(fmt.Sprint(err), "unknown phonemes") {
-		// 	messages = append(messages, fmt.Sprint(err))
-		// } else {
 		return messages, err
-		// }
-	}
-	if len(ssErrs) > 0 {
-		for _, e := range ssErrs {
-			messages = append(messages, e.String())
-		}
 	}
 	for _, symbol := range splitted {
 		if !ss.ValidSymbol(symbol) {
@@ -66,18 +57,9 @@ func validateTranscription(ss SymbolSet, trans string) ([]string, error) {
 }
 func validateIPATranscription(ss SymbolSet, trans string) ([]string, error) {
 	var messages = make([]string, 0)
-	splitted, ssErrs, err := ss.SplitIPATranscription(trans)
+	splitted, err := ss.SplitIPATranscription(trans)
 	if err != nil {
-		// if strings.Contains(fmt.Sprint(err), "unknown phonemes") {
-		// 	messages = append(messages, fmt.Sprint(err))
-		// } else {
 		return messages, err
-		// }
-	}
-	if len(ssErrs) > 0 {
-		for _, e := range ssErrs {
-			messages = append(messages, e.String())
-		}
 	}
 	for _, symbol := range splitted {
 		if !ss.ValidIPASymbol(symbol) {
@@ -102,25 +84,33 @@ func testSymbolSet(ss SymbolSet, tests []string) (testResult, error) {
 		}
 		if t.symbolType == "IPA" {
 			res, err := validateIPATranscription(ss, t.trans)
-			if err != nil {
-				return testResult{ok: false}, err
+			if t.testType == "ACCEPT" {
+				if err != nil {
+					return testResult{ok: false}, err
+				}
+				if len(res) > 0 {
+					return testResult{ok: false, errors: []string{fmt.Sprintf("accept test failed: /%s/ : %v", t.trans, res)}}, nil
+				}
 			}
-			if t.testType == "ACCEPT" && len(res) > 0 {
-				return testResult{ok: false, errors: []string{fmt.Sprintf("accept test failed: /%s/ : %v", t.trans, res)}}, nil
-			}
-			if t.testType == "REJECT" && len(res) == 0 {
-				return testResult{ok: false, errors: []string{fmt.Sprintf("reject test failed: /%s/ : %v", t.trans, res)}}, nil
+			if t.testType == "REJECT" {
+				if err == nil && len(res) == 0 {
+					return testResult{ok: false, errors: []string{fmt.Sprintf("reject test failed: /%s/ : %v", t.trans, res)}}, nil
+				}
 			}
 		} else if t.symbolType == "SYMBOLS" {
 			res, err := validateTranscription(ss, t.trans)
-			if err != nil {
-				return testResult{ok: false}, err
+			if t.testType == "ACCEPT" {
+				if err != nil {
+					return testResult{ok: false}, err
+				}
+				if len(res) > 0 {
+					return testResult{ok: false, errors: []string{fmt.Sprintf("accept test failed: /%s/ : %v", t.trans, res)}}, nil
+				}
 			}
-			if t.testType == "ACCEPT" && len(res) > 0 {
-				return testResult{ok: false, errors: []string{fmt.Sprintf("accept test failed: /%s/ : %v", t.trans, res)}}, nil
-			}
-			if t.testType == "REJECT" && len(res) == 0 {
-				return testResult{ok: false, errors: []string{fmt.Sprintf("reject test failed: /%s/ : %v", t.trans, res)}}, nil
+			if t.testType == "REJECT" {
+				if err == nil && len(res) == 0 {
+					return testResult{ok: false, errors: []string{fmt.Sprintf("reject test failed: /%s/ : %v", t.trans, res)}}, nil
+				}
 			}
 		}
 	}

@@ -59,7 +59,7 @@ func (s Service) DeleteMapper(fromName string, toName string) error {
 func (s Service) Load(symbolSetFile string) error {
 	ss, err := symbolset.LoadSymbolSet(symbolSetFile)
 	if err != nil {
-		return fmt.Errorf("couldn't load symbol set : %v", err)
+		return fmt.Errorf("couldn't load symbol set : %w", err)
 	}
 	s.SymbolSets[ss.Name] = ss
 	log.Printf("Loaded symbol set %v into cache", ss.Name)
@@ -75,82 +75,69 @@ func (s Service) Clear() {
 	s.Mappers = make(map[string]Mapper)
 }
 
-func (s Service) getOrCreateMapper(fromName string, toName string) (Mapper, []symbolset.SymbolSetError, error) {
-	var ssErrs []symbolset.SymbolSetError
+func (s Service) getOrCreateMapper(fromName string, toName string) (Mapper, error) {
 	name := fromName + " - " + toName
 	mapper, ok := s.Mappers[name]
 	if ok {
-		return mapper, nil, nil
+		return mapper, nil
 	}
 
 	var from, to symbolset.SymbolSet
 	from, okFrom := s.SymbolSets[fromName]
+	unknownSymbolSets := []string{}
 	if !okFrom {
-		ssErrs = append(ssErrs, symbolset.SymbolSetError{
-			ErrorType: "no such symbol set",
-			Values:    []string{fromName},
-		})
+		unknownSymbolSets = append(unknownSymbolSets, fromName)
 		//return nilRes, fmt.Errorf("couldn't find left hand symbol set named '%s'", fromName)
 	}
 	to, okTo := s.SymbolSets[toName]
 	if !okTo {
-		ssErrs = append(ssErrs, symbolset.SymbolSetError{
-			ErrorType: "no such symbol set",
-			Values:    []string{toName},
-		})
+		unknownSymbolSets = append(unknownSymbolSets, toName)
 		// return nilRes, fmt.Errorf("couldn't find right hand symbol set named '%s'", toName)
 	}
-	mapper, ssErrs, err := LoadMapper(from, to)
+	if len(unknownSymbolSets) > 0 {
+		return mapper, symbolset.UnknownSymbolSet(unknownSymbolSets)
+	}
+	mapper, err := LoadMapper(from, to)
 	if err == nil {
 		s.Mappers[name] = mapper
 	}
-	return mapper, nil, err
+	return mapper, err
 }
 
 // Map is used by the server to map a transcription from one symbol set to another
-func (s Service) Map(fromName string, toName string, trans string) (string, []symbolset.SymbolSetError, error) {
-	var ssErrs []symbolset.SymbolSetError
+func (s Service) Map(fromName string, toName string, trans string) (string, error) {
 	if toName == "ipa" {
 		ss, ok := s.SymbolSets[fromName]
 		if !ok {
-			ssErrs = append(ssErrs, symbolset.SymbolSetError{
-				ErrorType: "no such symbol set",
-				Values:    []string{fromName},
-			})
-			return "", ssErrs, nil
+			err := symbolset.UnknownSymbolSet([]string{fromName})
+			return "", err
 		}
 		return ss.ConvertToIPA(trans)
 	} else if fromName == "ipa" {
 		ss, ok := s.SymbolSets[toName]
 		if !ok {
-			ssErrs = append(ssErrs, symbolset.SymbolSetError{
-				ErrorType: "no such symbol set",
-				Values:    []string{toName},
-			})
-			return "", ssErrs, nil
+			err := symbolset.UnknownSymbolSet([]string{toName})
+			return "", err
 		}
 		return ss.ConvertFromIPA(trans)
 	} else {
-		mapper, ssErrs, err := s.getOrCreateMapper(fromName, toName)
+		mapper, err := s.getOrCreateMapper(fromName, toName)
 		if err != nil {
-			return "", nil, fmt.Errorf("couldn't create mapper from %s to %s : %v", fromName, toName, err)
+			return "", fmt.Errorf("couldn't create mapper from %s to %s : %w", fromName, toName, err)
 		}
-		if len(ssErrs) > 0 {
-			return "", ssErrs, nil
+		res, err := mapper.MapTranscription(trans)
+		if err != nil {
+			return res, err
 		}
-		res, ssErrs, err := mapper.MapTranscription(trans)
-		if err != nil || len(ssErrs) > 0 {
-			return res, ssErrs, err
-		}
-		return res, nil, nil
+		return res, nil
 	}
 }
 
 // GetMapTable is used by the server to show/get a mapping table between two symbol sets
-func (s Service) GetMapTable(fromName string, toName string) (Mapper, []symbolset.SymbolSetError, error) {
-	mapper, ssErrs, err := s.getOrCreateMapper(fromName, toName)
+func (s Service) GetMapTable(fromName string, toName string) (Mapper, error) {
+	mapper, err := s.getOrCreateMapper(fromName, toName)
 	if err != nil {
-		return Mapper{}, ssErrs, fmt.Errorf("couldn't create mapper from %s to %s : %v", fromName, toName, err)
+		return Mapper{}, fmt.Errorf("couldn't create mapper from %s to %s : %w", fromName, toName, err)
 	}
-	return mapper, ssErrs, nil
+	return mapper, nil
 }

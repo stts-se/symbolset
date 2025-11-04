@@ -1,7 +1,6 @@
 package mapper
 
 import (
-	"os"
 	"testing"
 
 	"github.com/stts-se/symbolset"
@@ -10,12 +9,9 @@ import (
 var fsExpTrans = "Expected: /%v/ got: /%v/"
 
 func testMapTranscription(t *testing.T, mapper Mapper, input string, expect string) {
-	result, ssErr, err := mapper.MapTranscription(input)
+	result, err := mapper.MapTranscription(input)
 	if err != nil {
 		t.Errorf("MapTranscription() didn't expect error here; input=/%s/, expect=/%s/ : %v", input, expect, err)
-		return
-	} else if ssErr != nil {
-		t.Errorf("MapTranscription() didn't expect error here; input=/%s/, expect=/%s/ : %v", input, expect, ssErr)
 		return
 	} else if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -48,23 +44,18 @@ func Test_MapTranscription_EmptyDelimiterInInput1(t *testing.T) {
 		t.Errorf("MapTranscription() didn't expect error here : %v", err)
 		return
 	}
-	ssm, ssErr, err := LoadMapper(ss1, ss2)
+	ssm, err := LoadMapper(ss1, ss2)
 	if err != nil {
 		t.Errorf("MapTranscription() didn't expect error here : %v", err)
-		return
-	} else if ssErr != nil {
-		t.Errorf("MapTranscription() didn't expect error here : %v", ssErr)
 		return
 	}
 
 	// --
 	input := "ar*ttr"
 	expect := "A RT T R"
-	result, ssErr, err := ssm.MapTranscription(input)
+	result, err := ssm.MapTranscription(input)
 	if err != nil {
 		t.Errorf("MapTranscription() didn't expect error here : %v", err)
-	} else if ssErr != nil {
-		t.Errorf("MapTranscription() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -73,11 +64,9 @@ func Test_MapTranscription_EmptyDelimiterInInput1(t *testing.T) {
 	// --
 	input = "ar*trt"
 	expect = "A RT R T"
-	result, ssErr, err = ssm.MapTranscription(input)
+	result, err = ssm.MapTranscription(input)
 	if err != nil {
 		t.Errorf("MapTranscription() didn't expect error here : %v", err)
-	} else if ssErr != nil {
-		t.Errorf("MapTranscription() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -517,12 +506,9 @@ func Test_MapTranscription_EmptyDelimiterInInput1(t *testing.T) {
 // }
 
 func Test_LoadMapperFromFile_NST2WS(t *testing.T) {
-	mapper, ssErr, err := LoadMapperFromFile("SAMPA", "SYMBOL", "../test_data/nb-no_nst-xsampa.sym", "../test_data/nb-no_ws-sampa.sym")
+	mapper, err := LoadMapperFromFile("SAMPA", "SYMBOL", "../test_data/nb-no_nst-xsampa.sym", "../test_data/nb-no_ws-sampa.sym")
 	if err != nil {
 		t.Errorf("Test_LoadMapperFromFile() didn't expect error here : %v", err)
-		return
-	} else if ssErr != nil {
-		t.Errorf("Test_LoadMapperFromFile() didn't expect error here : %v", ssErr)
 		return
 	}
 
@@ -534,27 +520,24 @@ func Test_LoadMapperFromFile_NST2WS(t *testing.T) {
 }
 
 func Test_LoadMapperFromFile_FailIfBothHaveTheSameName(t *testing.T) {
-	_, ssErr, err := LoadMapperFromFile("SAMPA", "SAMPA", "../test_data/nb-no_nst-xsampa.sym", "../test_data/nb-no_ws-sampa.sym")
-	if err == nil && len(ssErr) > 0 {
+	_, err := LoadMapperFromFile("SAMPA", "SAMPA", "../test_data/nb-no_nst-xsampa.sym", "../test_data/nb-no_ws-sampa.sym")
+	if err == nil {
 		t.Errorf("LoadMapperFromFile() expected error here")
 	}
 }
 
 func Test_LoadMapperFromFile_FailIfBothHaveTheSameFile(t *testing.T) {
-	_, ssErr, err := LoadMapperFromFile("XSAMPA", "SAMPA", "../test_data/nb-no_nst-xsampa.sym", "../test_data/nb-no_nst-xsampa.sym")
-	if err == nil && len(ssErr) > 0 {
+	_, err := LoadMapperFromFile("XSAMPA", "SAMPA", "../test_data/nb-no_nst-xsampa.sym", "../test_data/nb-no_nst-xsampa.sym")
+	if err == nil {
 		t.Errorf("LoadMapperFromFile() expected error here")
 	}
 }
 
 func Test_MapperFromFile_CMU2WS_NoSyllDelim(t *testing.T) {
-	mapper, ssErr, err := LoadMapperFromFile("ENU-CMU", "ENU-WS", "../test_data/en-us_cmu-nosylldelim.sym", "../test_data/en-us_ws-sampa.sym")
+	mapper, err := LoadMapperFromFile("ENU-CMU", "ENU-WS", "../test_data/en-us_cmu-nosylldelim.sym", "../test_data/en-us_ws-sampa.sym")
 	if err != nil {
 		t.Errorf("Test_LoadMapperFromFile() didn't expect error here : %v", err)
 		return
-	}
-	if len(ssErr) > 0 {
-		t.Errorf("Test_LoadMapperFromFile() didn't expect error here : %v", ssErr)
 	}
 
 	testMapTranscription(t, mapper, "P L AE1 T AX P UH2 S", "p l ' { t @ p % U s")
@@ -567,13 +550,10 @@ func Test_MapperFromFile_CMU2WS_NoSyllDelim(t *testing.T) {
 }
 
 func Test_MapperFromFile_CMU2WS_WithSyllDelim(t *testing.T) {
-	mapper, ssErr, err := LoadMapperFromFile("ENU-CMU", "ENU-WS", "../test_data/en-us_cmu.sym", "../test_data/en-us_ws-sampa.sym")
+	mapper, err := LoadMapperFromFile("ENU-CMU", "ENU-WS", "../test_data/en-us_cmu.sym", "../test_data/en-us_ws-sampa.sym")
 	if err != nil {
 		t.Errorf("Test_LoadMapperFromFile() didn't expect error here : %v", err)
 		return
-	}
-	if len(ssErr) > 0 {
-		os.Exit(1)
 	}
 
 	//testMapTranscription(t, mapper, " ", " ")

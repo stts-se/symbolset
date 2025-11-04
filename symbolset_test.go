@@ -1,15 +1,15 @@
 package symbolset
 
-import "testing"
+import (
+	"errors"
+	"testing"
+)
 
 var fsExpTrans = "Expected: /%v/ got: /%v/"
 
 func testSymbolSetConvertToIPA(t *testing.T, ss SymbolSet, input string, expect string) {
-	result, ssErr, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToIPA(input)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
-		return
-	} else if ssErr != nil {
 		t.Errorf("ConvertToIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 		return
 	} else if result != expect {
@@ -18,11 +18,8 @@ func testSymbolSetConvertToIPA(t *testing.T, ss SymbolSet, input string, expect 
 }
 
 func testSymbolSetConvertFromIPA(t *testing.T, ss SymbolSet, input string, expect string) {
-	result, ssErr, err := ss.ConvertFromIPA(input)
+	result, err := ss.ConvertFromIPA(input)
 	if err != nil {
-		t.Errorf("ConvertFromIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
-		return
-	} else if ssErr != nil {
 		t.Errorf("ConvertFromIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 		return
 	} else if result != expect {
@@ -87,12 +84,9 @@ func Test_SplitTranscription_Normal1(t *testing.T) {
 
 	input := "a t s t_s s"
 	expect := []string{"a", "t", "s", "t_s", "s"}
-	result, ssErrs, err := ss.SplitTranscription(input)
+	result, err := ss.SplitTranscription(input)
 	if err != nil {
 		t.Errorf("SplitIPATranscription() didn't expect error here: %s ", err)
-		return
-	} else if len(ssErrs) > 0 {
-		t.Errorf("SplitIPATranscription() didn't expect error here; input=%s, expect=%s : %v", input, expect, ssErrs)
 		return
 	}
 	testEqStrings(t, expect, result)
@@ -115,12 +109,9 @@ func Test_SplitIPATranscription_Normal1(t *testing.T) {
 
 	input := "atstSs"
 	expect := []string{"a", "t", "s", "tS", "s"}
-	result, ssErr, err := ss.SplitIPATranscription(input)
+	result, err := ss.SplitIPATranscription(input)
 	if err != nil {
 		t.Errorf("SplitIPATranscription() didn't expect error here: %s ", err)
-		return
-	} else if ssErr != nil {
-		t.Errorf("SplitIPATranscription() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 		return
 	}
 	testEqStrings(t, expect, result)
@@ -146,12 +137,9 @@ func Test_SplitIPATranscription_AccentII(t *testing.T) {
 
 	input := "ˈbrɑ̀ː.ka"
 	expect := []string{"ˈ̀", "b", "r", "ɑː", ".", "k", "a"}
-	result, ssErr, err := ss.SplitIPATranscription(input)
+	result, err := ss.SplitIPATranscription(input)
 	if err != nil {
 		t.Errorf("SplitIPATranscription() didn't expect error here: %s ", err)
-		return
-	} else if ssErr != nil {
-		t.Errorf("SplitIPATranscription() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 		return
 	}
 	testEqStrings(t, expect, result)
@@ -174,12 +162,9 @@ func Test_SplitTranscription_EmptyPhonemeDelmiter1(t *testing.T) {
 
 	input := "atst_ss"
 	expect := []string{"a", "t", "s", "t_s", "s"}
-	result, ssErrs, err := ss.SplitTranscription(input)
+	result, err := ss.SplitTranscription(input)
 	if err != nil {
 		t.Errorf("SplitTranscription() didn't expect error here")
-	} else if len(ssErrs) > 0 {
-		t.Errorf("SplitTranscription() didn't expect error here; input=%s, expect=%s : %v", input, expect, ssErrs)
-		return
 	}
 	testEqStrings(t, expect, result)
 }
@@ -202,14 +187,12 @@ func Test_SplitTranscription_FailWithUnknownSymbols_EmptyDelim(t *testing.T) {
 	}
 	input := "\"\"baN.ka"
 	//expect := []string{"\"\"", "b", "a", "N", ".", "k", "a"}
-	result, ssErrs, err := ss.SplitTranscription(input)
-	if len(ssErrs) == 0 {
-		t.Errorf("SplitTranscription() expected error here, but got %s", result)
-		return
-	}
-	if err != nil {
-		t.Errorf("SplitTranscription() didn't expect error here")
-		//t.Errorf("SplitTranscription() expected error here, but got %s", result)
+	_, err = ss.SplitTranscription(input)
+	var ssErr *SymbolSetError
+	if errors.As(err, &ssErr) && ssErr.ErrorCode == ErrCodeUnknownInputSymbol {
+		// ok
+	} else if err != nil {
+		t.Errorf("SplitTranscription() didn't expect error here, found: %v", err)
 	}
 }
 
@@ -231,11 +214,9 @@ func Test_SplitTranscription_NoFailWithUnknownSymbols_NonEmptyDelim(t *testing.T
 	}
 	input := "\"\" b a N . k a"
 	expect := []string{"\"\"", "b", "a", "N", ".", "k", "a"}
-	result, ssErrs, err := ss.SplitTranscription(input)
+	result, err := ss.SplitTranscription(input)
 	if err != nil {
 		t.Errorf("SplitTranscription() didn't expect error here : %v", err)
-	} else if len(ssErrs) > 0 {
-		t.Errorf("SplitTranscription() didn't expect error here; input=%s, expect=%s : %v", input, expect, ssErrs)
 		return
 	}
 	testEqStrings(t, expect, result)
@@ -298,12 +279,9 @@ func Test_ConvertToIPA(t *testing.T) {
 	// --
 	input := "\"\"brA:$ka"
 	expect := "\u02C8brɑ\u0300ː.ka"
-	result, ssErr, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToIPA(input)
 	if err != nil {
 		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
-		return
-	} else if ssErr != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 		return
 	} else if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -312,12 +290,9 @@ func Test_ConvertToIPA(t *testing.T) {
 	// --
 	input = "\"brA:$ka"
 	expect = "\u02C8brɑː.ka"
-	result, ssErr, err = ss.ConvertToIPA(input)
+	result, err = ss.ConvertToIPA(input)
 	if err != nil {
 		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
-		return
-	} else if ssErr != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 		return
 	}
 	if result != expect {
@@ -346,11 +321,9 @@ func Test_ConvertFromIPA(t *testing.T) {
 	// --
 	input := "\u02C8brɑ\u0300ː.ka"
 	expect := "\"\"brA:$ka"
-	result, ssErr, err := ss.ConvertFromIPA(input)
+	result, err := ss.ConvertFromIPA(input)
 	if err != nil {
 		t.Errorf("ConvertFromIPA() didn't expect error here : %v", err)
-	} else if ssErr != nil {
-		t.Errorf("ConvertFromIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -359,11 +332,9 @@ func Test_ConvertFromIPA(t *testing.T) {
 	// --
 	input = "\u02C8brɑː.ka"
 	expect = "\"brA:$ka"
-	result, ssErr, err = ss.ConvertFromIPA(input)
+	result, err = ss.ConvertFromIPA(input)
 	if err != nil {
 		t.Errorf("ConvertFromIPA() didn't expect error here : %v", err)
-	} else if ssErr != nil {
-		t.Errorf("ConvertFromIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 		return
 	}
 	if result != expect {
@@ -437,12 +408,10 @@ func Test_MapTranscription_Sampa2Ipa_Simple(t *testing.T) {
 	}
 	input := "pa$pa"
 	expect := "pa.pa"
-	result, ssErr, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToIPA(input)
 	if err != nil {
 		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
 		return
-	} else if ssErr != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -638,11 +607,9 @@ func Test_ConvertToIPA_Sampa2Ipa_Simple(t *testing.T) {
 	}
 	input := "pa$pa"
 	expect := "pa.pa"
-	result, ssErr, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToIPA(input)
 	if err != nil {
 		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
-	} else if ssErr != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -665,11 +632,9 @@ func Test_ConvertToIPA_Sampa2Ipa_WithSwedishStress_1(t *testing.T) {
 	}
 	input := "\"\"pa$pa"
 	expect := "\u02C8pa\u0300.pa"
-	result, ssErr, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToIPA(input)
 	if err != nil {
 		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
-	} else if ssErr != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -695,11 +660,9 @@ func Test_ConvertToIPA_Sampa2Ipa_WithSwedishStress_2(t *testing.T) {
 	}
 	input := "\"\"brA:$ka"
 	expect := "\u02C8brɑ\u0300ː.ka"
-	result, ssErr, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToIPA(input)
 	if err != nil {
 		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
-	} else if ssErr != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -722,8 +685,8 @@ func Test_ConvertToIPA_FailWithUnknownSymbols_NonEmptyDelim(t *testing.T) {
 		return
 	}
 	input := "\"\" b a ŋ . k a"
-	result, ssErr, err := ss.ConvertToIPA(input)
-	if err == nil && ssErr == nil {
+	result, err := ss.ConvertToIPA(input)
+	if err == nil {
 		t.Errorf("NewSymbolSet() expected error here, but got %s", result)
 	}
 }

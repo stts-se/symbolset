@@ -2,6 +2,7 @@ package symbolset
 
 import (
 	"bufio"
+	"errors"
 	"fmt"
 	"io/ioutil"
 	"os"
@@ -44,7 +45,7 @@ func symbolCatFromString(s string) (SymbolCat, error) {
 	case "WordDelimiter":
 		symCat = WordDelimiter
 	default:
-		return symCat, fmt.Errorf("unknown symbolcat %s", s)
+		return symCat, UnknownSymbolType([]string{s})
 	}
 	return symCat, nil
 }
@@ -173,7 +174,7 @@ func NewSymbolSetWithTests(name string, symbols []Symbol, testLines []string, ch
 	}
 	testRes, err := testSymbolSet(res, testLines)
 	if err != nil {
-		return nilRes, fmt.Errorf("couldn't test symbol set %s : %v", res.Name, err)
+		return nilRes, fmt.Errorf("couldn't test symbol set %s : %w", res.Name, err)
 	}
 	if !testRes.ok {
 		return nilRes, fmt.Errorf("tests failed for %s : %v", res.Name, testRes.errors)
@@ -250,7 +251,7 @@ func LoadSymbolSetWithName(name string, fName string) (SymbolSet, error) {
 
 	ss, err := NewSymbolSetWithTests(name, symbols, testLines, true)
 	if err != nil {
-		return nilRes, fmt.Errorf("couldn't load symbol set from file %v : %v", fName, err)
+		return nilRes, fmt.Errorf("couldn't load symbol set from file %v : %w", fName, err)
 	}
 	return ss, nil
 }
@@ -260,7 +261,7 @@ func LoadSymbolSetsFromDir(dirName string) (map[string]SymbolSet, error) {
 	// list files in symbol set dir
 	fileInfos, err := ioutil.ReadDir(dirName)
 	if err != nil {
-		return nil, fmt.Errorf("failed reading symbol set dir : %v", err)
+		return nil, fmt.Errorf("failed reading symbol set dir : %w", err)
 	}
 	var fErrs error
 	var symSets []SymbolSet
@@ -268,9 +269,9 @@ func LoadSymbolSetsFromDir(dirName string) (map[string]SymbolSet, error) {
 		if strings.HasSuffix(fi.Name(), SymbolSetSuffix) {
 			symset, err := LoadSymbolSet(filepath.Join(dirName, fi.Name()))
 			if err != nil {
-				thisErr := fmt.Errorf("could't load symbol set from file %s : %v", fi.Name(), err)
+				thisErr := fmt.Errorf("couldn't load symbol set from file %s : %w", fi.Name(), err)
 				if fErrs != nil {
-					fErrs = fmt.Errorf("%v : %v", fErrs, thisErr)
+					fErrs = errors.Join(fErrs, thisErr)
 				} else {
 					fErrs = thisErr
 				}
