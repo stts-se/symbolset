@@ -20,6 +20,9 @@ const (
 	// IPA is used for IPA transcriptions
 	IPA
 
+	// InternalIPA is used for the symbol set internal IPA table
+	InternalIPA
+
 	// Other is used for symbol sets not defined in the types above
 	Other
 )
@@ -95,6 +98,7 @@ type SymbolSet struct {
 	SyllabicRe    *regexp.Regexp
 	NonSyllabicRe *regexp.Regexp
 	SymbolRe      *regexp.Regexp
+	StressRe      *regexp.Regexp
 
 	ipaPhonemeRe     *regexp.Regexp
 	ipaSyllabicRe    *regexp.Regexp
@@ -111,7 +115,7 @@ func (ss SymbolSet) ValidSymbol(symbol string) bool {
 }
 
 // ValidIPASymbol checks if a string is a valid symbol or not
-func (ss SymbolSet) ValidIPASymbol(symbol string) bool {
+func (ss SymbolSet) ValidInternalIPASymbol(symbol string) bool {
 	for _, s := range ss.Symbols {
 		if s.IPA.String == symbol {
 			return true
@@ -146,8 +150,8 @@ func (ss SymbolSet) Get(symbol string) (Symbol, error) {
 	return Symbol{}, fmt.Errorf("no symbol /%s/ in symbol set", symbol)
 }
 
-// GetFromIPA searches the SymbolSet for a symbol with the given IPA symbol string
-func (ss SymbolSet) GetFromIPA(ipa string) (Symbol, error) {
+// GetFromInternalIPA searches the SymbolSet for a symbol with the given IPA symbol string
+func (ss SymbolSet) GetFromInternalIPA(ipa string) (Symbol, error) {
 	for _, s := range ss.Symbols {
 		if s.IPA.String == ipa {
 			return s, nil
@@ -186,8 +190,8 @@ func (ss SymbolSet) SplitTranscription(input string) ([]string, error) {
 	return res, nil
 }
 
-// SplitIPATranscription splits the input transcription into separate symbols
-func (ss SymbolSet) SplitIPATranscription(input string) ([]string, error) {
+// SplitInternalIPATranscription splits the input transcription into separate symbols
+func (ss SymbolSet) SplitInternalIPATranscription(input string) ([]string, error) {
 	if !ss.isInit {
 		panic("symbolSet " + ss.Name + " has not been initialized properly!")
 	}
@@ -216,8 +220,8 @@ func (ss SymbolSet) SplitIPATranscription(input string) ([]string, error) {
 	return strings.Split(input, delim), nil
 }
 
-// ConvertToIPA maps one input transcription string into an IPA transcription
-func (ss SymbolSet) ConvertToIPA(trans string) (string, error) {
+// ConvertToInternalIPA maps one input transcription string into an IPA transcription
+func (ss SymbolSet) ConvertToInternalIPA(trans string) (string, error) {
 	var unknownInputSymbols = []string{}
 	res, err := preFilter(ss, trans, ss.Type)
 	if err != nil {
@@ -253,16 +257,16 @@ func (ss SymbolSet) ConvertToIPA(trans string) (string, error) {
 }
 
 // ConvertFromIPA maps one input IPA transcription into the current symbol set
-func (ss SymbolSet) ConvertFromIPA(trans string) (string, error) {
+func (ss SymbolSet) ConvertFromInternalIPA(trans string) (string, error) {
 	res := trans
-	splitted, err := ss.SplitIPATranscription(res)
+	splitted, err := ss.SplitInternalIPATranscription(res)
 	if err != nil {
 		return "", err
 	}
 	var unknownInputSymbols = []string{}
 	var mapped = make([]string, 0)
 	for _, fromS := range splitted {
-		symbol, err := ss.GetFromIPA(fromS)
+		symbol, err := ss.GetFromInternalIPA(fromS)
 		if err != nil {
 			unknownInputSymbols = append(unknownInputSymbols, fromS)
 			continue

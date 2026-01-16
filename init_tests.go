@@ -57,12 +57,12 @@ func validateTranscription(ss SymbolSet, trans string) ([]string, error) {
 }
 func validateIPATranscription(ss SymbolSet, trans string) ([]string, error) {
 	var messages = make([]string, 0)
-	splitted, err := ss.SplitIPATranscription(trans)
+	splitted, err := ss.SplitInternalIPATranscription(trans)
 	if err != nil {
 		return messages, err
 	}
 	for _, symbol := range splitted {
-		if !ss.ValidIPASymbol(symbol) {
+		if !ss.ValidInternalIPASymbol(symbol) {
 			messages = append(
 				messages,
 				fmt.Sprintf("Invalid transcription symbol '%s' in /%s/", symbol, trans))

@@ -112,14 +112,14 @@ func (s Service) Map(fromName string, toName string, trans string) (string, erro
 			err := symbolset.UnknownSymbolSet([]string{fromName})
 			return "", err
 		}
-		return ss.ConvertToIPA(trans)
+		return ss.ConvertToInternalIPA(trans)
 	} else if fromName == "ipa" {
 		ss, ok := s.SymbolSets[toName]
 		if !ok {
 			err := symbolset.UnknownSymbolSet([]string{toName})
 			return "", err
 		}
-		return ss.ConvertFromIPA(trans)
+		return ss.ConvertFromInternalIPA(trans)
 	} else {
 		mapper, err := s.getOrCreateMapper(fromName, toName)
 		if err != nil {

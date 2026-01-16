@@ -124,14 +124,14 @@ func contains(symbols []Symbol, symbol string) bool {
 }
 
 /*
-func indexOf(elements []string, element string) int {
-	for i, s := range elements {
-		if s == element {
-			return i
+	func indexOf(elements []string, element string) int {
+		for i, s := range elements {
+			if s == element {
+				return i
+			}
 		}
+		return -1
 	}
-	return -1
-}
 */
 func string2unicode(s string) string {
 	res := ""

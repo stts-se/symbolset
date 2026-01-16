@@ -95,6 +95,10 @@ func NewSymbolSetWithTests(name string, symbols []Symbol, testLines []string, ch
 	if err != nil {
 		return nilRes, err
 	}
+	stressRe, err := buildRegexp(stressSymbols)
+	if err != nil {
+		return nilRes, err
+	}
 
 	// IPA regexps
 	ipaSyllabicRe, err := buildIPARegexp(syllabic)
@@ -134,9 +138,9 @@ func NewSymbolSetWithTests(name string, symbols []Symbol, testLines []string, ch
 			}
 			seenSymbols[symbol.String] = symbol
 		}
-		if len(dupSymbols) > 0 {
-			return nilRes, fmt.Errorf("input symbol set contains duplicates of phoneme %v. All symbols: %v", dupSymbols, symbols)
-		}
+		// if len(dupSymbols) > 0 {
+		// 	return nilRes, fmt.Errorf("input symbol set contains duplicates of phoneme %v. All symbols: %v", dupSymbols, symbols)
+		// }
 	}
 
 	repeatedPhonemeDelimiters, err := regexp.Compile(phonemeDelimiterRe.String() + "+")
@@ -163,6 +167,7 @@ func NewSymbolSetWithTests(name string, symbols []Symbol, testLines []string, ch
 		SyllabicRe:    syllabicRe,
 		NonSyllabicRe: nonSyllabicRe,
 		SymbolRe:      symbolRe,
+		StressRe:      stressRe,
 
 		ipaSyllabicRe:    ipaSyllabicRe,
 		ipaNonSyllabicRe: ipaNonSyllabicRe,

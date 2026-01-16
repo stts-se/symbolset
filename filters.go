@@ -9,7 +9,9 @@ import (
 )
 
 func preFilter(ss SymbolSet, trans string, fromType Type) (string, error) {
-	if fromType == IPA {
+	if fromType == InternalIPA {
+		return filterBeforeMappingFromInternalIPA(ss, trans)
+	} else if fromType == IPA {
 		return filterBeforeMappingFromIPA(ss, trans)
 	} else if fromType == CMU {
 		return filterBeforeMappingFromCMU(ss, trans)
@@ -18,7 +20,9 @@ func preFilter(ss SymbolSet, trans string, fromType Type) (string, error) {
 }
 
 func postFilter(ss SymbolSet, trans string, toType Type) (string, error) {
-	if toType == IPA {
+	if toType == InternalIPA {
+		return filterAfterMappingToInternalIPA(ss, trans)
+	} else if toType == IPA {
 		return filterAfterMappingToIPA(ss, trans)
 	} else if toType == CMU {
 		return filterAfterMappingToCMU(ss, trans)
@@ -35,7 +39,7 @@ var ipaLength = "\u02D0"
 //var ipaSyllDelim = "."
 //var cmuString = "cmu"
 
-func filterBeforeMappingFromIPA(ss SymbolSet, trans string) (string, error) {
+func filterBeforeMappingFromInternalIPA(ss SymbolSet, trans string) (string, error) {
 	// IPA: ˈba`ŋ.ka => ˈ`baŋ.ka"
 	// IPA: ˈɑ̀ː.pa => ˈ`ɑː.pa
 	trans = strings.Replace(trans, ipaAccentII+ipaLength, ipaLength+ipaAccentII, -1)
@@ -49,38 +53,85 @@ func filterBeforeMappingFromIPA(ss SymbolSet, trans string) (string, error) {
 }
 
 /*
-func canMapToIPA(ss SymbolSet, trans string) (bool, error) {
-	symbols, err := ss.SplitIPATranscription(trans)
-	if err != nil {
-		return false, err
+	func canMapToIPA(ss SymbolSet, trans string) (bool, error) {
+		symbols, err := ss.SplitIPATranscription(trans)
+		if err != nil {
+			return false, err
+		}
+		nSyllabic := 0
+		foundDelim := false
+		syllabicReS := "^(" + ss.ipaSyllabicRe.String() + ")$"
+		syllabicRe, err := regexp.Compile(syllabicReS)
+		if err != nil {
+			return false, fmt.Errorf("cannot create ipa syllabic regexp from string /%s/", syllabicReS)
+		}
+		for _, sym := range symbols {
+			if syllabicRe.MatchString(sym) {
+				nSyllabic = nSyllabic + 1
+			} else if sym == ipaSyllDelim {
+				foundDelim = true
+			}
+		}
+		if foundDelim == false && nSyllabic > 1 {
+			return false, nil
+		}
+		return true, nil
 	}
-	nSyllabic := 0
-	foundDelim := false
-	syllabicReS := "^(" + ss.ipaSyllabicRe.String() + ")$"
-	syllabicRe, err := regexp.Compile(syllabicReS)
+*/
+
+func filterBeforeMappingFromIPA(ss SymbolSet, trans string) (string, error) {
+	return filterBeforeMappingFromInternalIPA(ss, trans)
+}
+
+func filterAfterMappingToIPA(ss SymbolSet, trans string) (string, error) {
+	// filter stress differently if the symbol set has a syllable delimiter
+	// hasSyllDelim := false
+	// for _, s := range filterSymbolsByCat(ss.Symbols, []SymbolCat{SyllableDelimiter}) {
+	// 	if len(s.String) > 0 {
+	// 		hasSyllDelim = true
+	// 	}
+	// }
+	// if !hasSyllDelim {
+	// 	return trans, nil
+	// }
+
+	// IPA: /t°Ɑlsyn`tEs/ => /t°Ɑlsynt`Es/
+	s := "(" + ss.StressRe.String() + ")(" + ss.NonSyllabicRe.String() + "*)(" + ss.SyllabicRe.String() + ")"
+	repl, err := regexp.Compile(s)
 	if err != nil {
-		return false, fmt.Errorf("cannot create ipa syllabic regexp from string /%s/", syllabicReS)
+		return "", fmt.Errorf("couldn't compile regexp from string '%s' : %w", s, err)
 	}
-	for _, sym := range symbols {
-		if syllabicRe.MatchString(sym) {
-			nSyllabic = nSyllabic + 1
-		} else if sym == ipaSyllDelim {
-			foundDelim = true
+	trans = repl.ReplaceAllString(trans, "$2$1$3")
+
+	// IPA: əs.ˈ̀̀e ...
+	// IPA: /'`pa.pa/ => /'pa`.pa/
+	accentIIConditionForAfterMapping := ipaAccentI + ipaAccentII
+	if strings.Contains(trans, accentIIConditionForAfterMapping) {
+		s := ipaAccentI + ipaAccentII + "(" + ss.NonSyllabicRe.String() + "*)(" + ss.SyllabicRe.String() + ")"
+		repl, err := regexp.Compile(s)
+		if err != nil {
+			return "", fmt.Errorf("couldn't compile regexp from string '%s' : %w", s, err)
+		}
+		res := repl.ReplaceAllString(trans, ipaAccentI+"$1$2"+ipaAccentII)
+		trans = res
+	}
+	// IPA: /'paː`.pa/ => /'pa`ː.pa/
+	trans = strings.Replace(trans, ipaLength+ipaAccentII, ipaAccentII+ipaLength, -1)
+	return trans, nil
+}
+
+func filterAfterMappingToInternalIPA(ss SymbolSet, trans string) (string, error) {
+
+	// filter stress differently if the symbol set has a syllable delimiter
+	hasSyllDelim := false
+	for _, s := range filterSymbolsByCat(ss.Symbols, []SymbolCat{SyllableDelimiter}) {
+		if len(s.String) > 0 {
+			hasSyllDelim = true
 		}
 	}
-	if foundDelim == false && nSyllabic > 1 {
-		return false, nil
-	}
-	return true, nil
-}
-*/
-func filterAfterMappingToIPA(ss SymbolSet, trans string) (string, error) {
-
-	// only filter stress if the symbol set has a syllable delimiter
-	if len(filterSymbolsByCat(ss.Symbols, []SymbolCat{SyllableDelimiter})) == 0 {
+	if !hasSyllDelim {
 		return trans, nil
 	}
-
 	// create an error if the input transcription contains more than one syllabic, but no syllable delimiter
 	// canMap, err := canMapToIPA(ss, trans)
 	// if err != nil {

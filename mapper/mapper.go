@@ -15,11 +15,11 @@ type Mapper struct {
 
 // MapTranscription maps one input transcription string into the new symbol set.
 func (m Mapper) MapTranscription(input string) (string, error) {
-	res, err := m.SymbolSet1.ConvertToIPA(input)
+	res, err := m.SymbolSet1.ConvertToInternalIPA(input)
 	if err != nil {
 		return "", fmt.Errorf("couldn't map transcription (1) : %w", err)
 	}
-	res, err = m.SymbolSet2.ConvertFromIPA(res)
+	res, err = m.SymbolSet2.ConvertFromInternalIPA(res)
 	if err != nil {
 		return "", fmt.Errorf("couldn't map transcription (2) : %w", err)
 	}
@@ -29,7 +29,7 @@ func (m Mapper) MapTranscription(input string) (string, error) {
 // MapSymbol maps one input transcription symbol into the new symbol set.
 func (m Mapper) MapSymbol(input symbolset.Symbol) (symbolset.Symbol, error) {
 	ipa := input.IPA.String
-	res, err := m.SymbolSet2.GetFromIPA(ipa)
+	res, err := m.SymbolSet2.GetFromInternalIPA(ipa)
 	if err != nil {
 		return symbolset.Symbol{}, fmt.Errorf("couldn't map symbol : %w", err)
 	}
@@ -42,7 +42,7 @@ func (m Mapper) MapSymbolString(input string) (string, error) {
 	if err != nil {
 		return "", fmt.Errorf("couldn't map transcription : %w", err)
 	}
-	res, err = m.SymbolSet2.GetFromIPA(res.IPA.String)
+	res, err = m.SymbolSet2.GetFromInternalIPA(res.IPA.String)
 	if err != nil {
 		return "", fmt.Errorf("couldn't map transcription : %w", err)
 	}
