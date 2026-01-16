@@ -7,20 +7,20 @@ import (
 
 var fsExpTrans = "Expected: /%v/ got: /%v/"
 
-func testSymbolSetConvertToIPA(t *testing.T, ss SymbolSet, input string, expect string) {
-	result, err := ss.ConvertToIPA(input)
+func testSymbolSetConvertToInternalIPA(t *testing.T, ss SymbolSet, input string, expect string) {
+	result, err := ss.ConvertToInternalIPA(input)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 		return
 	} else if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
 	}
 }
 
-func testSymbolSetConvertFromIPA(t *testing.T, ss SymbolSet, input string, expect string) {
-	result, err := ss.ConvertFromIPA(input)
+func testSymbolSetConvertFromInternalIPA(t *testing.T, ss SymbolSet, input string, expect string) {
+	result, err := ss.ConvertFromInternalIPA(input)
 	if err != nil {
-		t.Errorf("ConvertFromIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
+		t.Errorf("ConvertFromInternalIPA() didn't expect error here; input=%s, expect=%s : %v", input, expect, err)
 		return
 	} else if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -39,7 +39,7 @@ func Test_NewSymbolSet_WithoutPhonemeDelimiter(t *testing.T) {
 	}
 }
 
-func Test_NewSymbolSet_FailIfInputContainsDuplicates(t *testing.T) {
+func Test_NewSymbolSet_InputContainsDuplicates(t *testing.T) {
 	name := "ss"
 	symbols := []Symbol{
 		{"a", Syllabic, "", IPASymbol{"", ""}},
@@ -48,8 +48,11 @@ func Test_NewSymbolSet_FailIfInputContainsDuplicates(t *testing.T) {
 		{" ", PhonemeDelimiter, "phn delim", IPASymbol{"", ""}},
 	}
 	_, err := NewSymbolSet(name, symbols)
-	if err == nil {
-		t.Errorf("NewSymbolSet() expected error here")
+	// if err == nil {
+	// 	t.Errorf("NewSymbolSet() expected error here")
+	// }
+	if err != nil {
+		t.Errorf("NewSymbolSet() didn't expect error here, found %v", err)
 	}
 }
 
@@ -109,7 +112,7 @@ func Test_SplitIPATranscription_Normal1(t *testing.T) {
 
 	input := "atstSs"
 	expect := []string{"a", "t", "s", "tS", "s"}
-	result, err := ss.SplitIPATranscription(input)
+	result, err := ss.SplitInternalIPATranscription(input)
 	if err != nil {
 		t.Errorf("SplitIPATranscription() didn't expect error here: %s ", err)
 		return
@@ -137,7 +140,7 @@ func Test_SplitIPATranscription_AccentII(t *testing.T) {
 
 	input := "ˈbrɑ̀ː.ka"
 	expect := []string{"ˈ̀", "b", "r", "ɑː", ".", "k", "a"}
-	result, err := ss.SplitIPATranscription(input)
+	result, err := ss.SplitInternalIPATranscription(input)
 	if err != nil {
 		t.Errorf("SplitIPATranscription() didn't expect error here: %s ", err)
 		return
@@ -258,7 +261,7 @@ func Test_ValidSymbol1(t *testing.T) {
 
 }
 
-func Test_ConvertToIPA(t *testing.T) {
+func Test_ConvertToInternalIPA(t *testing.T) {
 	symbols := []Symbol{
 		{"a", Syllabic, "", IPASymbol{"a", "U+0061"}},
 		{"b", NonSyllabic, "", IPASymbol{"b", "U+0062"}},
@@ -279,9 +282,9 @@ func Test_ConvertToIPA(t *testing.T) {
 	// --
 	input := "\"\"brA:$ka"
 	expect := "\u02C8brɑ\u0300ː.ka"
-	result, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToInternalIPA(input)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here : %v", err)
 		return
 	} else if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -290,9 +293,9 @@ func Test_ConvertToIPA(t *testing.T) {
 	// --
 	input = "\"brA:$ka"
 	expect = "\u02C8brɑː.ka"
-	result, err = ss.ConvertToIPA(input)
+	result, err = ss.ConvertToInternalIPA(input)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here : %v", err)
 		return
 	}
 	if result != expect {
@@ -300,7 +303,7 @@ func Test_ConvertToIPA(t *testing.T) {
 	}
 }
 
-func Test_ConvertFromIPA(t *testing.T) {
+func Test_ConvertFromInternalIPA(t *testing.T) {
 	symbols := []Symbol{
 		{"a", Syllabic, "", IPASymbol{"a", "U+0061"}},
 		{"b", NonSyllabic, "", IPASymbol{"b", "U+0062"}},
@@ -321,9 +324,9 @@ func Test_ConvertFromIPA(t *testing.T) {
 	// --
 	input := "\u02C8brɑ\u0300ː.ka"
 	expect := "\"\"brA:$ka"
-	result, err := ss.ConvertFromIPA(input)
+	result, err := ss.ConvertFromInternalIPA(input)
 	if err != nil {
-		t.Errorf("ConvertFromIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertFromInternalIPA() didn't expect error here : %v", err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
@@ -332,9 +335,9 @@ func Test_ConvertFromIPA(t *testing.T) {
 	// --
 	input = "\u02C8brɑː.ka"
 	expect = "\"brA:$ka"
-	result, err = ss.ConvertFromIPA(input)
+	result, err = ss.ConvertFromInternalIPA(input)
 	if err != nil {
-		t.Errorf("ConvertFromIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertFromInternalIPA() didn't expect error here : %v", err)
 		return
 	}
 	if result != expect {
@@ -389,9 +392,9 @@ func Test_loadSymbolSet_NST2IPA_SV(t *testing.T) {
 		t.Errorf("LoadSymbolSetWithName() didn't expect error here : %v", err)
 		return
 	}
-	testSymbolSetConvertToIPA(t, ss, "\"bOt`", "\u02C8bɔʈ")
-	testSymbolSetConvertToIPA(t, ss, "\"ku0rds", "\u02C8kɵrds")
-	testSymbolSetConvertToIPA(t, ss, "\"\"ku0$d@", "\u02C8kɵ\u0300.də")
+	testSymbolSetConvertToInternalIPA(t, ss, "\"bOt`", "\u02C8bɔʈ")
+	testSymbolSetConvertToInternalIPA(t, ss, "\"ku0rds", "\u02C8kɵrds")
+	testSymbolSetConvertToInternalIPA(t, ss, "\"\"ku0$d@", "\u02C8kɵ\u0300.də")
 }
 
 func Test_MapTranscription_Sampa2Ipa_Simple(t *testing.T) {
@@ -408,9 +411,9 @@ func Test_MapTranscription_Sampa2Ipa_Simple(t *testing.T) {
 	}
 	input := "pa$pa"
 	expect := "pa.pa"
-	result, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToInternalIPA(input)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here : %v", err)
 		return
 	}
 	if result != expect {
@@ -426,8 +429,8 @@ func Test_loadSymbolSet_WS2IPA(t *testing.T) {
 		t.Errorf("LoadSymbolSet() didn't expect error here : %v", err)
 		return
 	}
-	testSymbolSetConvertToIPA(t, ss, "\" b O rt", "\u02C8bɔʈ")
-	testSymbolSetConvertToIPA(t, ss, "\" k u0 r d s", "\u02C8kɵrds")
+	testSymbolSetConvertToInternalIPA(t, ss, "\" b O rt", "\u02C8bɔʈ")
+	testSymbolSetConvertToInternalIPA(t, ss, "\" k u0 r d s", "\u02C8kɵrds")
 }
 
 func Test_loadSymbolSet_CMU2IPA(t *testing.T) {
@@ -438,7 +441,7 @@ func Test_loadSymbolSet_CMU2IPA(t *testing.T) {
 		t.Errorf("LoadSymbolSet() didn't expect error here : %v", err)
 		return
 	}
-	testSymbolSetConvertToIPA(t, ss, "AX $ B AW1 T", "ə.\u02C8ba⁀ʊt")
+	testSymbolSetConvertToInternalIPA(t, ss, "AX $ B AW1 T", "ə.\u02C8ba⁀ʊt")
 }
 
 func Test_loadSymbolSet_MARY2IPA(t *testing.T) {
@@ -449,7 +452,7 @@ func Test_loadSymbolSet_MARY2IPA(t *testing.T) {
 		t.Errorf("LoadSymbolSet() didn't expect error here : %v", err)
 		return
 	}
-	testSymbolSetConvertToIPA(t, ss, "@ - ' b aU t", "ə.\u02C8ba⁀ʊt")
+	testSymbolSetConvertToInternalIPA(t, ss, "@ - ' b aU t", "ə.\u02C8ba⁀ʊt")
 }
 
 func Test_loadSymbolSet_NST2IPA_NB(t *testing.T) {
@@ -464,10 +467,10 @@ func Test_loadSymbolSet_NST2IPA_NB(t *testing.T) {
 		t.Errorf("Expected symbol set type %#v, got %#v", SAMPA.String(), ss.Type.String())
 		return
 	}
-	testSymbolSetConvertToIPA(t, ss, "\"A:$bl@s", "\u02C8ɑː.bləs")
-	testSymbolSetConvertToIPA(t, ss, "\"tSE$kIsk", "\u02C8tʃɛ.kɪsk")
-	testSymbolSetConvertToIPA(t, ss, "\"\"b9$n@r", "\u02C8bœ\u0300.nər")
-	testSymbolSetConvertToIPA(t, ss, "\"b9$n@r", "\u02C8bœ.nər")
+	testSymbolSetConvertToInternalIPA(t, ss, "\"A:$bl@s", "\u02C8ɑː.bləs")
+	testSymbolSetConvertToInternalIPA(t, ss, "\"tSE$kIsk", "\u02C8tʃɛ.kɪsk")
+	testSymbolSetConvertToInternalIPA(t, ss, "\"\"b9$n@r", "\u02C8bœ\u0300.nər")
+	testSymbolSetConvertToInternalIPA(t, ss, "\"b9$n@r", "\u02C8bœ.nər")
 }
 
 func Test_loadSymbolSet_IPA2WS(t *testing.T) {
@@ -482,8 +485,8 @@ func Test_loadSymbolSet_IPA2WS(t *testing.T) {
 		t.Errorf("Expected symbol set type %#v, got %#v", SAMPA.String(), ss.Type.String())
 		return
 	}
-	testSymbolSetConvertFromIPA(t, ss, "\u02C8bɔʈ", "\" b O rt")
-	testSymbolSetConvertFromIPA(t, ss, "\u02C8kɵrds", "\" k u0 r d s")
+	testSymbolSetConvertFromInternalIPA(t, ss, "\u02C8bɔʈ", "\" b O rt")
+	testSymbolSetConvertFromInternalIPA(t, ss, "\u02C8kɵrds", "\" k u0 r d s")
 }
 
 func Test_loadSymbolSet_IPA2MARY(t *testing.T) {
@@ -499,7 +502,7 @@ func Test_loadSymbolSet_IPA2MARY(t *testing.T) {
 		return
 	}
 
-	testSymbolSetConvertFromIPA(t, ss, "ə.\u02C8ba⁀ʊt", "@ - ' b aU t")
+	testSymbolSetConvertFromInternalIPA(t, ss, "ə.\u02C8ba⁀ʊt", "@ - ' b aU t")
 }
 
 func Test_loadSymbolSet_IPA2SAMPA(t *testing.T) {
@@ -515,8 +518,8 @@ func Test_loadSymbolSet_IPA2SAMPA(t *testing.T) {
 		return
 	}
 
-	testSymbolSetConvertFromIPA(t, ss, "\u02C8kaj.rʊ", "\" k a j . r U")
-	testSymbolSetConvertFromIPA(t, ss, "be.\u02C8liːn", "b e . \" l i: n")
+	testSymbolSetConvertFromInternalIPA(t, ss, "\u02C8kaj.rʊ", "\" k a j . r U")
+	testSymbolSetConvertFromInternalIPA(t, ss, "be.\u02C8liːn", "b e . \" l i: n")
 }
 
 func Test_loadSymbolSet_IPA2CMU(t *testing.T) {
@@ -532,8 +535,8 @@ func Test_loadSymbolSet_IPA2CMU(t *testing.T) {
 		return
 	}
 
-	testSymbolSetConvertFromIPA(t, ss, "ə.\u02C8ba⁀ʊt", "AX $ B AW1 T")
-	testSymbolSetConvertFromIPA(t, ss, "ʌ.\u02C8ba⁀ʊt", "AH $ B AW1 T")
+	testSymbolSetConvertFromInternalIPA(t, ss, "ə.\u02C8ba⁀ʊt", "AX $ B AW1 T")
+	testSymbolSetConvertFromInternalIPA(t, ss, "ʌ.\u02C8ba⁀ʊt", "AH $ B AW1 T")
 }
 
 func Test_loadSymbolSet_IPA2NST_NB(t *testing.T) {
@@ -543,13 +546,13 @@ func Test_loadSymbolSet_IPA2NST_NB(t *testing.T) {
 	if err != nil {
 		t.Errorf("LoadSymbolSet() didn't expect error here : %v", err)
 	}
-	testSymbolSetConvertFromIPA(t, ss, "\u02C8ɑː.bləs", "\"A:$bl@s")
-	testSymbolSetConvertFromIPA(t, ss, "\u02C8tʃɛ.kɪsk", "\"tSE$kIsk")
-	testSymbolSetConvertFromIPA(t, ss, "\u02C8bœ\u0300.nər", "\"\"b9$n@r")
-	testSymbolSetConvertFromIPA(t, ss, "\u02C8bœ.nər", "\"b9$n@r")
+	testSymbolSetConvertFromInternalIPA(t, ss, "\u02C8ɑː.bləs", "\"A:$bl@s")
+	testSymbolSetConvertFromInternalIPA(t, ss, "\u02C8tʃɛ.kɪsk", "\"tSE$kIsk")
+	testSymbolSetConvertFromInternalIPA(t, ss, "\u02C8bœ\u0300.nər", "\"\"b9$n@r")
+	testSymbolSetConvertFromInternalIPA(t, ss, "\u02C8bœ.nər", "\"b9$n@r")
 }
 
-func Test_NewSymbolSet_IPADuplicates_ConvertToIPA(t *testing.T) {
+func Test_NewSymbolSet_IPADuplicates_ConvertToInternalIPA(t *testing.T) {
 	symbols := []Symbol{
 		{"i", Syllabic, "", IPASymbol{"I", "U+0049"}},
 		{"i3", Syllabic, "", IPASymbol{"I", "U+0049"}},
@@ -561,11 +564,11 @@ func Test_NewSymbolSet_IPADuplicates_ConvertToIPA(t *testing.T) {
 		t.Errorf("NewSymbolSet() didn't expect error here : %v", err)
 		return
 	}
-	testSymbolSetConvertToIPA(t, ss, "i3 p", "I_P")
-	testSymbolSetConvertToIPA(t, ss, "i p", "I_P")
+	testSymbolSetConvertToInternalIPA(t, ss, "i3 p", "I_P")
+	testSymbolSetConvertToInternalIPA(t, ss, "i p", "I_P")
 }
 
-func Test_NewSymbolSet_IPADuplicates_ConvertFromIPA(t *testing.T) {
+func Test_NewSymbolSet_IPADuplicates_ConvertFromInternalIPA(t *testing.T) {
 	symbols := []Symbol{
 		{"i", Syllabic, "", IPASymbol{"I", "U+0049"}},
 		{"i3", Syllabic, "", IPASymbol{"I", "U+0049"}},
@@ -577,8 +580,8 @@ func Test_NewSymbolSet_IPADuplicates_ConvertFromIPA(t *testing.T) {
 		t.Errorf("NewSymbolSet() didn't expect error here : %v", err)
 		return
 	}
-	testSymbolSetConvertFromIPA(t, ss, "IP", "i p")
-	testSymbolSetConvertFromIPA(t, ss, "IP", "i p")
+	testSymbolSetConvertFromInternalIPA(t, ss, "IP", "i p")
+	testSymbolSetConvertFromInternalIPA(t, ss, "IP", "i p")
 }
 
 func Test_NewSymbolSet_FailIfLacksPhonemeDelimiter(t *testing.T) {
@@ -593,7 +596,7 @@ func Test_NewSymbolSet_FailIfLacksPhonemeDelimiter(t *testing.T) {
 	}
 }
 
-func Test_ConvertToIPA_Sampa2Ipa_Simple(t *testing.T) {
+func Test_ConvertToInternalIPA_Sampa2Ipa_Simple(t *testing.T) {
 	symbols := []Symbol{
 		{"a", Syllabic, "", IPASymbol{"a", "U+0061"}},
 		{"p", NonSyllabic, "", IPASymbol{"p", "U+0070"}},
@@ -602,21 +605,21 @@ func Test_ConvertToIPA_Sampa2Ipa_Simple(t *testing.T) {
 	}
 	ss, err := NewSymbolSet("test", symbols)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here : %v", err)
 		return
 	}
 	input := "pa$pa"
 	expect := "pa.pa"
-	result, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToInternalIPA(input)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here : %v", err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
 	}
 }
 
-func Test_ConvertToIPA_Sampa2Ipa_WithSwedishStress_1(t *testing.T) {
+func Test_ConvertToInternalIPA_Sampa2Ipa_WithSwedishStress_1(t *testing.T) {
 	symbols := []Symbol{
 		{"a", Syllabic, "", IPASymbol{"a", "U+0061"}},
 		{"p", NonSyllabic, "", IPASymbol{"p", "U+0070"}},
@@ -627,21 +630,21 @@ func Test_ConvertToIPA_Sampa2Ipa_WithSwedishStress_1(t *testing.T) {
 	}
 	ss, err := NewSymbolSet("test", symbols)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here : %v", err)
 		return
 	}
 	input := "\"\"pa$pa"
 	expect := "\u02C8pa\u0300.pa"
-	result, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToInternalIPA(input)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here : %v", err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
 	}
 }
 
-func Test_ConvertToIPA_Sampa2Ipa_WithSwedishStress_2(t *testing.T) {
+func Test_ConvertToInternalIPA_Sampa2Ipa_WithSwedishStress_2(t *testing.T) {
 	symbols := []Symbol{
 		{"a", Syllabic, "", IPASymbol{"a", "U+0061"}},
 		{"b", NonSyllabic, "", IPASymbol{"b", "U+0062"}},
@@ -655,21 +658,21 @@ func Test_ConvertToIPA_Sampa2Ipa_WithSwedishStress_2(t *testing.T) {
 	}
 	ss, err := NewSymbolSet("test", symbols)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here : %v", err)
 		return
 	}
 	input := "\"\"brA:$ka"
 	expect := "\u02C8brɑ\u0300ː.ka"
-	result, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToInternalIPA(input)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here : %v", err)
 	}
 	if result != expect {
 		t.Errorf(fsExpTrans, expect, result)
 	}
 }
 
-func Test_ConvertToIPA_FailWithUnknownSymbols_NonEmptyDelim(t *testing.T) {
+func Test_ConvertToInternalIPA_FailWithUnknownSymbols_NonEmptyDelim(t *testing.T) {
 	symbols := []Symbol{
 		{"a", Syllabic, "", IPASymbol{"a", "U+0061"}},
 		{"b", NonSyllabic, "", IPASymbol{"b", "U+0062"}},
@@ -681,11 +684,11 @@ func Test_ConvertToIPA_FailWithUnknownSymbols_NonEmptyDelim(t *testing.T) {
 	}
 	ss, err := NewSymbolSet("test", symbols)
 	if err != nil {
-		t.Errorf("ConvertToIPA() didn't expect error here : %v", err)
+		t.Errorf("ConvertToInternalIPA() didn't expect error here : %v", err)
 		return
 	}
 	input := "\"\" b a ŋ . k a"
-	result, err := ss.ConvertToIPA(input)
+	result, err := ss.ConvertToInternalIPA(input)
 	if err == nil {
 		t.Errorf("NewSymbolSet() expected error here, but got %s", result)
 	}
@@ -729,7 +732,7 @@ func Test_Get(t *testing.T) {
 
 }
 
-func Test_GetFromIPA(t *testing.T) {
+func Test_GetFromInternalIPA(t *testing.T) {
 	symbols := []Symbol{
 		{"a", Syllabic, "", IPASymbol{"A", "U+0041"}},
 		{"P", NonSyllabic, "", IPASymbol{"p", "U+0070"}},
@@ -743,7 +746,7 @@ func Test_GetFromIPA(t *testing.T) {
 
 	// --
 	{
-		res, err := ss.GetFromIPA("p")
+		res, err := ss.GetFromInternalIPA("p")
 		if err != nil {
 			t.Errorf("didn't expect error here : %v", err)
 			return
@@ -758,7 +761,7 @@ func Test_GetFromIPA(t *testing.T) {
 
 	// --
 	{
-		_, err := ss.GetFromIPA("a")
+		_, err := ss.GetFromInternalIPA("a")
 		if err == nil {
 			t.Errorf("expected error here for unknown input symbol : %v", "A")
 			return

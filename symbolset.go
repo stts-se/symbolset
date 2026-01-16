@@ -252,7 +252,7 @@ func (ss SymbolSet) ConvertToInternalIPA(trans string) (string, error) {
 
 	res = strings.Join(mapped, ss.PhonemeDelimiter.IPA.String)
 
-	res, err = postFilter(ss, res, IPA)
+	res, err = postFilter(ss, res, InternalIPA)
 	return res, err
 }
 
