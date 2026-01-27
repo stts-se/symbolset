@@ -15,41 +15,46 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
 
 2. Clone the source code
 
-   `$ git clone https://github.com/stts-se/symbolset.git`  
-   `$ cd symbolset`   
+   ``` sh
+   $ git clone https://github.com/stts-se/symbolset.git
+   $ git clone https://github.com/stts-se/wikispeech-lexdata.git # optional
+   $ cd symbolset/
+   ```   
    
-3. Test (optional)
+4. Test (optional)
 
-   `symbolset$ go test ./...`
+   ```sh
+   symbolset$ go test ./...
+   ```
 
 
-4. Pre-compile server (for faster execution times).
+6. Pre-compile server (for faster execution times).
 
-    `symbolset$ cd server`   
-    `server$ go build .`
+   ``` sh
+   symbolset$ cd server/
+   server$ go build .
+    ```
 
 
 ## II. Setup with Wikispeech symbolsets (optional)
 
-1. Clone Wikispeech lexdata (this might take a couple of minutes)
+1. Setup 
 
-   `$ git clone https://github.com/stts-se/wikispeech-lexdata.git <destination_folder>`
-
-
-2. Setup 
-
-    `server$ bash setup.sh wikispeech-lexdata ss_files`
-
+    ``` sh
+   server$ bash setup.sh ../../wikispeech-lexdata/ ss_files
+   ```
 
 3. Start server
 
-    `server$ ./server -ss_files ss_files`
+    ``` sh
+   server$ ./server -ss_files ss_files/
+   ```
 
 ## IIb. Alternative: Start the server without Wikispeech symbol sets (using demo symbol sets)
 
-`server$ ./server -ss_files demo_files`
-
-
+    ```
+    server$ ./server -ss_files demo_files/
+    ```
 
 
 ---
