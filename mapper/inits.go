@@ -25,7 +25,8 @@ func LoadMapper(s1 symbolset.SymbolSet, s2 symbolset.SymbolSet) (Mapper, error) 
 			}
 			if len(mapped) > 0 {
 				if err != nil {
-					err = fmt.Errorf("couldn't test mapper: %w", err)
+					err2 := fmt.Errorf("couldn't test mapper: %w", err)
+					err = err2
 					break
 				}
 			}
