@@ -4,7 +4,7 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
 
 [![GoDoc](https://godoc.org/github.com/stts-se/symbolset?status.svg)](https://godoc.org/github.com/stts-se/symbolset)
 [![Go Report Card](https://goreportcard.com/badge/github.com/stts-se/symbolset)](https://goreportcard.com/report/github.com/stts-se/symbolset)
-[![Build Status](https://github.com/stts-se/symbolset/actions/workflows/go.yml/badge.svg)](https://github.com/stts-se/symbolset/actions/workflows/go.yml)
+[![Build Status](https://github.com/stts-se/symbolset/actions/workflows/build%20status.yml/badge.svg)](https://github.com/stts-se/symbolset/actions/workflows/build%20status.yml)
 
 ## I. Server installation
 
