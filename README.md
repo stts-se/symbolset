@@ -37,7 +37,7 @@ Symbolset is a repository for handling phonetic symbol sets and mappers/converte
     ```
 
 
-## II. Setup with Wikispeech symbolsets (optional)
+## II. Setup with Wikispeech symbolsets
 
 1. Setup 
 
