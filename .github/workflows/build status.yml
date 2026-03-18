@@ -49,7 +49,7 @@ jobs:
        echo "symbolset server started on pid $pid. wait for $SLEEP seconds before shutting down"
        sleep $SLEEP
 
-       curl http://localhost:8780/ping
+       curl http://localhost:8771/ping
 
        #cd ..
        #sh .github/workflows/exit_server_and_fail_if_not_running.sh symbolset $pid
