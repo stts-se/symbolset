@@ -30,3 +30,25 @@ jobs:
 
     - name: Go report card
       uses: creekorful/goreportcard-action@v1.0
+
+    - name: Setup
+      run: |
+       RELEASE=master
+       cd server
+       git clone https://github.com/stts-se/wikispeech-lexdata.git
+       cd wikispeech-lexdata
+       git checkout $RELEASE || echo "No such release for lexdata. Using master."
+       cd ..
+       bash setup.sh wikispeech-lexdata ss_files
+       
+    - name: Start server
+      run: |
+       SLEEP=30
+       go run *.go -ss_files ss_files &
+       export pid=$!
+       echo "symbolset server started on pid $pid. wait for $SLEEP seconds before shutting down"
+       sleep $SLEEP
+       cd ..
+       sh .github/workflows/exit_server_and_fail_if_not_running.sh symbolset $pid
+ 
+
