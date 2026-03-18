@@ -48,7 +48,10 @@ jobs:
        export pid=$!
        echo "symbolset server started on pid $pid. wait for $SLEEP seconds before shutting down"
        sleep $SLEEP
-       cd ..
-       sh .github/workflows/exit_server_and_fail_if_not_running.sh symbolset $pid
+
+       curl http://localhost:8780/ping
+
+       #cd ..
+       #sh .github/workflows/exit_server_and_fail_if_not_running.sh symbolset $pid
  
 
