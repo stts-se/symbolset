@@ -47,6 +47,8 @@ jobs:
        go run *.go -ss_files ss_files &
        sleep 20
        
+    - name: Ping server
+      run: |
        curl -f http://localhost:8771/ping
  
 
