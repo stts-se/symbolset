@@ -44,6 +44,7 @@ jobs:
     - name: Start server
       run: |
        SLEEP=30
+       cd server
        go run *.go -ss_files ss_files &
        export pid=$!
        echo "symbolset server started on pid $pid. wait for $SLEEP seconds before shutting down"
