@@ -46,6 +46,7 @@ jobs:
        cd server
        go run *.go -ss_files ss_files &
        sleep 20
+       
        curl -f http://localhost:8771/ping
  
 
