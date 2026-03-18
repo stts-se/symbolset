@@ -51,9 +51,6 @@ jobs:
        sleep $SLEEP
 
        curl -f http://localhost:8771/ping
-       if [ $? -ne 0 ];
-           exit 1
-       fi
 
        #cd ..
        #sh .github/workflows/exit_server_and_fail_if_not_running.sh symbolset $pid
