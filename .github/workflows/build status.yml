@@ -36,9 +36,9 @@ jobs:
        RELEASE=master
        cd server
        git clone https://github.com/stts-se/wikispeech-lexdata.git
-       cd wikispeech-lexdata
-       git checkout $RELEASE || echo "No such release for lexdata. Using master."
-       cd ..
+       #cd wikispeech-lexdata
+       #git checkout $RELEASE || echo "No such release for lexdata. Using master."
+       #cd ..
        bash setup.sh wikispeech-lexdata ss_files
        
     - name: Start server
