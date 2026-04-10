@@ -181,7 +181,7 @@ var mapperMaptable = urlHandler{
 					Request:   mapRequest,
 				})
 			} else {
-				msg := fmt.Sprintf("failed getting map table : %v", err)
+				msg := fmt.Sprintf("failed getting map table from %s to %s: %v", fromName, toName, err)
 				log.Println(msg)
 				http.Error(w, msg, http.StatusInternalServerError)
 				return
@@ -204,7 +204,7 @@ var mapperMaptable = urlHandler{
 		for _, from := range mapper0.SymbolSet1.Symbols {
 			to, err := mapper0.MapSymbol(from)
 			if err != nil {
-				msg := fmt.Sprintf("failed getting map table : %v", err)
+				msg := fmt.Sprintf("failed getting map table from %s to %s: %v", fromName, toName, err)
 				log.Println(msg)
 				http.Error(w, msg, http.StatusInternalServerError)
 				return
@@ -374,14 +374,14 @@ func testMappers(mDefFile string) error {
 			mtab, err := mMut.service.GetMapTable(mt.fromName, mt.toName)
 			mMut.Unlock()
 			if err != nil {
-				msg := fmt.Sprintf("failed getting map table : %v", err)
+				msg := fmt.Sprintf("failed getting map table from %s to %s: %v", mt.fromName, mt.toName, err)
 				log.Println(msg)
 				return err
 			}
 			for _, from := range mtab.SymbolSet1.Symbols {
 				_, err := mtab.MapSymbol(from)
 				if err != nil {
-					msg := fmt.Sprintf("failed getting map table : %v", err)
+					msg := fmt.Sprintf("failed getting map table from %s to %s: %v", mt.fromName, mt.toName, err)
 					err2 := mMut.service.DeleteMapper(mt.fromName, mt.toName)
 					if err2 != nil {
 						msg = fmt.Sprintf("%s : failed to delete mapper : %v", msg, err2)

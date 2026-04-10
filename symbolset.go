@@ -147,7 +147,7 @@ func (ss SymbolSet) Get(symbol string) (Symbol, error) {
 			return s, nil
 		}
 	}
-	return Symbol{}, fmt.Errorf("no symbol /%s/ in symbol set", symbol)
+	return Symbol{}, fmt.Errorf("no symbol /%s/ in symbol set %s", symbol, ss.Name)
 }
 
 // GetFromInternalIPA searches the SymbolSet for a symbol with the given IPA symbol string
@@ -157,7 +157,7 @@ func (ss SymbolSet) GetFromInternalIPA(ipa string) (Symbol, error) {
 			return s, nil
 		}
 	}
-	return Symbol{}, fmt.Errorf("no ipa symbol /%s/ in symbol set", ipa)
+	return Symbol{}, fmt.Errorf("no ipa symbol /%s/ in symbol set %s", ipa, ss.Name)
 }
 
 // SplitTranscription splits the input transcription into separate symbols

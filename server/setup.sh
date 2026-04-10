@@ -21,6 +21,7 @@ echo " done" >&2
 
 echo -n "Copying symbol sets ..." >&2
 cp --backup=numbered $LEXDATA/*/*/*.sym $DESTDIR
+rm -f $DESTDIR/*~*~
 echo " done" >&2
 
 echo -n "Copying converters ..." >&2
