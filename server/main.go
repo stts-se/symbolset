@@ -11,7 +11,6 @@ import (
 	"os"
 	"os/exec"
 	"os/signal"
-	"os/user"
 	"path/filepath"
 	"regexp"
 	"strings"
@@ -113,9 +112,10 @@ func isHandeledPage(url string) bool {
 	return false
 }
 
+var startedTimestamp = time.Now()
+
 // UTC time with format: yyyy-MM-dd HH:mm:ss z | %Y-%m-%d %H:%M:%S %Z
-var startedTimestamp = time.Now()              //.UTC().Format("2006-01-02 15:04:05 MST")
-const timestampFmt = "2006-01-02 15:04:05 CET" // time.UnixDate // "%Y-%m-%d %H:%M:%S" // "2019-11-04 15:34 CET"
+const timestampFmt = "2006-01-02 15:04:05 CEST" // time.UnixDate // "%Y-%m-%d %H:%M:%S" // "2019-11-04 15:34 CEST"
 
 const buildInfoFile = "buildinfo.txt"
 
@@ -142,17 +142,17 @@ func generateAbout(w http.ResponseWriter, r *http.Request) {
 	}
 
 	res := [][]string{}
-	res = append(res, []string{"Application name", "Symbolset"})
+	res = append(res, []string{"Application name:", "symbolset"})
 
 	// build timestamp
-	res = append(res, getBuildInfo("Build timestamp", buildInfoLines, "n/a"))
-	user, err := user.Current()
-	if err != nil {
-		log.Printf("failed reading system user name : %v", err)
-	}
+	//res = append(res, getBuildInfo("Build timestamp", buildInfoLines, "n/a"))
+	// user, err := user.Current()
+	// if err != nil {
+	// 	log.Printf("failed reading system user name : %v", err)
+	// }
 
 	// built by username
-	res = append(res, getBuildInfo("Built by", buildInfoLines, user.Username))
+	//res = append(res, getBuildInfo("Built by", buildInfoLines, "user"))
 
 	// git commit id and branch
 	commitIDLong, err := exec.Command("git", "rev-parse", "HEAD").Output()
@@ -168,27 +168,32 @@ func generateAbout(w http.ResponseWriter, r *http.Request) {
 			commitIDAndBranch = fmt.Sprintf("%s on %s", commitID, strings.TrimSpace(string(branch)))
 		}
 	}
-	res = append(res, getBuildInfo("Git commit", buildInfoLines, commitIDAndBranch))
+	res = append(res, getBuildInfo("Commit", buildInfoLines, commitIDAndBranch))
 
 	// git release tag
 	releaseTag, err := exec.Command("git", "describe", "--tags").Output()
 	if err != nil {
 		log.Printf("couldn't retrieve git release/tag: %v", err)
-		releaseTag = []byte("unknown")
+		//releaseTag = []byte("unknown")
+	} else {
+		res = append(res, getBuildInfo("Release", buildInfoLines, string(releaseTag)))
 	}
-	res = append(res, getBuildInfo("Release", buildInfoLines, string(releaseTag)))
 
-	res = append(res, []string{"Started", startedTimestamp.Format(timestampFmt)})
-	res = append(res, []string{"Host", *host})
-	//res = append(res, []string{"Port", port})
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	fmt.Fprintf(w, "<html><head><title>%s</title></head><body>", "Symbolset: About")
-	fmt.Fprintf(w, "<table><tbody>")
+	res = append(res, []string{"Started:", startedTimestamp.Format(timestampFmt)})
+	// res = append(res, []string{"Host", *host})
+	// res = append(res, []string{"Port", *port})
 	for _, l := range res {
-		fmt.Fprintf(w, "<tr><td>%s</td><td>%s</td></tr>\n", l[0], l[1])
+		fmt.Fprintf(w, "%s %s\n", l[0], l[1])
 	}
-	fmt.Fprintf(w, "</tbody></table>")
-	fmt.Fprintf(w, "</body></html>")
+	//res = append(res, []string{"Port", port})
+	// fmt.Fprintf(w, "<html><head><title>%s</title></head><body>", "Symbolset: About")
+	// fmt.Fprintf(w, "<html><head><title>%s</title></head><body>", "Symbolset: About")
+	// fmt.Fprintf(w, "<table><tbody>")
+	// for _, l := range res {
+	// 	fmt.Fprintf(w, "<tr><td>%s</td><td>%s</td></tr>\n", l[0], l[1])
+	// }
+	// fmt.Fprintf(w, "</tbody></table>")
+	// fmt.Fprintf(w, "</body></html>")
 }
 
 func newSubRouter(rout *mux.Router, root string, description string) *subRouter {
