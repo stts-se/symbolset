@@ -156,17 +156,19 @@ func generateAbout(w http.ResponseWriter, r *http.Request) {
 
 	// git commit id and branch
 	commitIDLong, err := exec.Command("git", "rev-parse", "HEAD").Output()
-	var commitIDAndBranch = "unknown"
+	var commitID = "unknown"
 	if err != nil {
 		log.Printf("couldn't retrieve git commit hash: %v", err)
 	} else {
-		commitID := string([]rune(string(commitIDLong)[0:7]))
-		branch, err := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD").Output()
-		if err != nil {
-			log.Printf("couldn't retrieve git branch: %v", err)
-		} else {
-			commitIDAndBranch = fmt.Sprintf("%s on %s", commitID, strings.TrimSpace(string(branch)))
-		}
+		commitID = string([]rune(string(commitIDLong)[0:7]))
+	}
+	branch, err := exec.Command("git", "rev-parse", "--abbrev-ref", "HEAD").Output()
+	var commitIDAndBranch = "unknown"
+	if err != nil {
+		log.Printf("couldn't retrieve git branch: %v", err)
+		commitIDAndBranch = fmt.Sprintf("%s on %s", commitID, "branch unknown")
+	} else {
+		commitIDAndBranch = fmt.Sprintf("%s on %s", commitID, strings.TrimSpace(string(branch)))
 	}
 	res = append(res, getBuildInfo("Commit", buildInfoLines, commitIDAndBranch))
 
